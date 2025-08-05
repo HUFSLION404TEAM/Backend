@@ -2,6 +2,7 @@ package hufs.lion.team404.service;
 
 import hufs.lion.team404.entity.User;
 import hufs.lion.team404.repository.UserRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,4 +46,22 @@ public class UserService {
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
+    @Transactional
+    public User findOrCreateKakaoUser(String email, String socialId, String nickname) {
+        return userRepository.findBySocialProviderAndSocialId("kakao", socialId)
+            .orElseGet(() -> {
+                User newUser = User.builder()
+                    .email(email)
+                    .socialProvider("kakao")
+                    .socialId(socialId)
+                    .nickname(nickname)
+                    .role("USER") // 너희 프로젝트 기준에 따라 수정 가능
+                    .build();
+                return userRepository.save(newUser);
+            });
+    }
 }
+
+
+
+

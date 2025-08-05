@@ -17,6 +17,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder;
+
 
 @Entity
 @Table(name = "users")
@@ -81,4 +83,18 @@ public class User {
 
 	@OneToMany(mappedBy = "payee", cascade = CascadeType.ALL)
 	private List<Payment> receivedPayments;
+	@Builder
+	public static User createUser(String email, String socialProvider, String socialId, String nickname, String role) {
+		User user = new User();
+		user.setEmail(email);
+		user.setSocialProvider(socialProvider);
+		user.setSocialId(socialId);
+		user.setNickname(nickname);
+		user.setRole(role);
+		return user;
+	}
+	private String nickname;
+	private String role;
+
+
 }
