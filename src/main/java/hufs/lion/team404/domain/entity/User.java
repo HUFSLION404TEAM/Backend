@@ -1,4 +1,4 @@
-package hufs.lion.team404.entity;
+package hufs.lion.team404.domain.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -6,15 +6,19 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import hufs.lion.team404.oauth.UserRole;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -81,4 +85,55 @@ public class User {
 
 	@OneToMany(mappedBy = "payee", cascade = CascadeType.ALL)
 	private List<Payment> receivedPayments;
+
+	private String picture;
+	private String provider;
+	private String providerId;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private UserRole userRole;
+
+	@Builder
+	public User(String name, String email, String profileImage, String socialProvider, String socialId,
+		String temperature, LocalDateTime createdAt, LocalDateTime updatedAt, Student student, Store store,
+		List<ChatMessage> sentMessages, List<Review> writtenReviews, List<Review> receivedReviews,
+		List<Report> reportsMade, List<Report> reportsReceived, List<Notification> notifications,
+		List<Favorite> favorites, List<Payment> payments, List<Payment> receivedPayments, String picture,
+		String provider, String providerId, UserRole userRole) {
+		this.name = name;
+		this.email = email;
+		this.profileImage = profileImage;
+		this.socialProvider = socialProvider;
+		this.socialId = socialId;
+		this.temperature = temperature;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.student = student;
+		this.store = store;
+		this.sentMessages = sentMessages;
+		this.writtenReviews = writtenReviews;
+		this.receivedReviews = receivedReviews;
+		this.reportsMade = reportsMade;
+		this.reportsReceived = reportsReceived;
+		this.notifications = notifications;
+		this.favorites = favorites;
+		this.payments = payments;
+		this.receivedPayments = receivedPayments;
+		this.picture = picture;
+		this.provider = provider;
+		this.providerId = providerId;
+		this.userRole = userRole;
+	}
+
+	public String getRoleKey() {
+		return this.userRole.getKey();
+	}
+
+	public User update(String name, String picture) {
+		this.name = name;
+		this.picture = picture;
+
+		return this;
+	}
 }

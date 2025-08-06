@@ -1,4 +1,4 @@
-package hufs.lion.team404.entity;
+package hufs.lion.team404.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

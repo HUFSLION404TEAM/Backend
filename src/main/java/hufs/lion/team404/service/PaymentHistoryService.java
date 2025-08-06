@@ -1,6 +1,7 @@
 package hufs.lion.team404.service;
 
-import hufs.lion.team404.entity.PaymentHistory;
+import hufs.lion.team404.domain.entity.Payment;
+import hufs.lion.team404.domain.entity.PaymentHistory;
 import hufs.lion.team404.repository.PaymentHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class PaymentHistoryService {
         return paymentHistoryRepository.findByPaymentIdOrderByCreatedAtDesc(paymentId);
     }
     
-    public List<PaymentHistory> findByCurrentStatus(hufs.lion.team404.entity.Payment.Status currentStatus) {
+    public List<PaymentHistory> findByCurrentStatus(Payment.Status currentStatus) {
         return paymentHistoryRepository.findByCurrentStatus(currentStatus);
     }
     

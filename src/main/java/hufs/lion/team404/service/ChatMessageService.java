@@ -1,6 +1,6 @@
 package hufs.lion.team404.service;
 
-import hufs.lion.team404.entity.ChatMessage;
+import hufs.lion.team404.domain.entity.ChatMessage;
 import hufs.lion.team404.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

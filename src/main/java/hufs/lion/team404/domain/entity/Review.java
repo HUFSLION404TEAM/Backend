@@ -1,4 +1,4 @@
-package hufs.lion.team404.entity;
+package hufs.lion.team404.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,36 +9,36 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "favorites")
+@Table(name = "reviews")
 @Data
 @NoArgsConstructor
-public class Favorite {
+public class Review {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "matching_id", nullable = false)
+    private Matching matching;
     
     @ManyToOne
-    @JoinColumn(name = "target_student_id")
-    private Student targetStudent;
+    @JoinColumn(name = "reviewer_id", nullable = false)
+    private User reviewer;
     
     @ManyToOne
-    @JoinColumn(name = "target_project_request_id")
-    private ProjectRequest targetProjectRequest;
+    @JoinColumn(name = "reviewee_id", nullable = false)
+    private User reviewee;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private FavoriteType favoriteType;
-    
-    @Column(columnDefinition = "TEXT")
-    private String memo;
+    private ReviewerType reviewerType;
     
     @Column(nullable = false)
-    private Boolean isNotificationEnabled = false;
+    private Integer rating;
+    
+    @Column(columnDefinition = "TEXT")
+    private String content;
     
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -46,7 +46,7 @@ public class Favorite {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
     
-    public enum FavoriteType {
-        STUDENT, PROJECT_REQUEST
+    public enum ReviewerType {
+        STORE, STUDENT
     }
 }

@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import hufs.lion.team404.entity.ChatRoom;
+import hufs.lion.team404.domain.entity.ChatRoom;
 import hufs.lion.team404.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 
