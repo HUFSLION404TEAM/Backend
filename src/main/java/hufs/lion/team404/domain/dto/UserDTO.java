@@ -16,8 +16,8 @@ public class UserDTO implements Serializable {
 	public UserDTO(User userEntity) {
 		this.name = userEntity.getName();
 		this.email = userEntity.getEmail();
-		this.picture = userEntity.getPicture();
-		this.provider = userEntity.getProvider();
-		this.providerId = userEntity.getProviderId();
+		this.picture = userEntity.getProfileImage();
+		this.provider = userEntity.getSocialProvider();
+		this.providerId = userEntity.getSocialId();
 	}
 }

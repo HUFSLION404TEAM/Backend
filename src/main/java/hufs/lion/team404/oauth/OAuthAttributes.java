@@ -12,20 +12,20 @@ public class OAuthAttributes {
 	private String nameAttributeKey;
 	private String name;
 	private String email;
-	private String picture;
-	private String provider;
-	private String providerId;
+	private String profileImage;
+	private String socialProvider;
+	private String socialId;
 
 	@Builder
 	public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String name, String email,
-		String picture, String provider, String providerId) {
+		String profileImage, String socialProvider, String socialId) {
 		this.attributes = attributes;
 		this.nameAttributeKey = nameAttributeKey;
 		this.name = name;
 		this.email = email;
-		this.picture = picture;
-		this.provider = provider;
-		this.providerId = providerId;
+		this.profileImage = profileImage;
+		this.socialProvider = socialProvider;
+		this.socialId = socialId;
 	}
 
 	public static OAuthAttributes of(String registrationId, String userNameAttributeName,
@@ -45,10 +45,10 @@ public class OAuthAttributes {
 		return OAuthAttributes.builder()
 			.name((String)attributes.get("name"))
 			.email((String)attributes.get("email"))
-			.picture((String)attributes.get("picture"))
+			.profileImage((String)attributes.get("picture"))
 			.attributes(attributes)
-			.provider(registrationId)
-			.providerId((String)attributes.get("sub"))
+			.socialProvider(registrationId)
+			.socialId((String)attributes.get("sub"))
 			.nameAttributeKey(userNameAttributeName)
 			.build();
 	}
@@ -60,27 +60,26 @@ public class OAuthAttributes {
 		return OAuthAttributes.builder()
 			.name((String)response.get("name"))
 			.email((String)response.get("email"))
-			.picture((String)response.get("profile_image"))
+			.profileImage((String)response.get("profile_image"))
 			.attributes(attributes)
-			.provider(registrationId)
-			.providerId((String)response.get("id"))
+			.socialProvider(registrationId)
+			.socialId((String)response.get("id"))
 			.nameAttributeKey(userNameAttributeName)
 			.build();
 	}
 
 	private static OAuthAttributes ofKakao(String registrationId, String userNameAttributeName,
 		Map<String, Object> attributes) {
-		System.out.println("attributes = " + attributes);
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 		Map<String, Object> profile = (Map<String, Object>)kakaoAccount.get("profile");
 
 		return OAuthAttributes.builder()
 			.name((String)profile.get("nickname"))
 			.email((String)kakaoAccount.get("email"))
-			.picture((String)profile.get("profile_image_url"))
+			.profileImage((String)profile.get("profile_image_url"))
 			.attributes(attributes)
-			.provider(registrationId)
-			.providerId(String.valueOf(attributes.get("id")))
+			.socialProvider(registrationId)
+			.socialId(String.valueOf(attributes.get("id")))
 			.nameAttributeKey(userNameAttributeName)
 			.build();
 	}
@@ -89,10 +88,11 @@ public class OAuthAttributes {
 		return User.builder()
 			.name(name)
 			.email(email)
-			.picture(picture)
+			.profileImage(profileImage)
 			.userRole(UserRole.STUDENT)
-			.provider(provider)
-			.providerId(providerId)
+			.socialProvider(socialProvider)
+			.socialId(socialId)
+			.temperature("0")
 			.build();
 	}
 }

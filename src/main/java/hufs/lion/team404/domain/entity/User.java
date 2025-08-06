@@ -86,10 +86,6 @@ public class User {
 	@OneToMany(mappedBy = "payee", cascade = CascadeType.ALL)
 	private List<Payment> receivedPayments;
 
-	private String picture;
-	private String provider;
-	private String providerId;
-
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private UserRole userRole;
@@ -99,8 +95,7 @@ public class User {
 		String temperature, LocalDateTime createdAt, LocalDateTime updatedAt, Student student, Store store,
 		List<ChatMessage> sentMessages, List<Review> writtenReviews, List<Review> receivedReviews,
 		List<Report> reportsMade, List<Report> reportsReceived, List<Notification> notifications,
-		List<Favorite> favorites, List<Payment> payments, List<Payment> receivedPayments, String picture,
-		String provider, String providerId, UserRole userRole) {
+		List<Favorite> favorites, List<Payment> payments, List<Payment> receivedPayments, UserRole userRole) {
 		this.name = name;
 		this.email = email;
 		this.profileImage = profileImage;
@@ -120,9 +115,6 @@ public class User {
 		this.favorites = favorites;
 		this.payments = payments;
 		this.receivedPayments = receivedPayments;
-		this.picture = picture;
-		this.provider = provider;
-		this.providerId = providerId;
 		this.userRole = userRole;
 	}
 
@@ -132,7 +124,7 @@ public class User {
 
 	public User update(String name, String picture) {
 		this.name = name;
-		this.picture = picture;
+		this.profileImage = picture;
 
 		return this;
 	}

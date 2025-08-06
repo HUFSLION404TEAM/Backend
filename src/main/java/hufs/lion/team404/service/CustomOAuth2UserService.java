@@ -56,12 +56,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			attributes.getNameAttributeKey());
 	}
 
-	// 구글 사용자 정보 업데이트 시 UserEntity 엔티티에 반영
 	private User saveOrUpdate(OAuthAttributes attributes) {
 
 		// 이메일을 기준으로 사용자를 찾아 업데이트하거나, 사용자를 새로 생성합니다.
 		User userEntity = userRepository.findByEmail(attributes.getEmail())
-			.map(entity -> entity.update(attributes.getName(), attributes.getPicture()))
+			.map(entity -> entity.update(attributes.getName(), attributes.getProfileImage()))
 			.orElse(attributes.toEntity());
 
 		return userRepository.save(userEntity);
