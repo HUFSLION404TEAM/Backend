@@ -89,7 +89,7 @@ public class OAuthAttributes {
 			.name(name)
 			.email(email)
 			.profileImage(profileImage)
-			.userRole(UserRole.STUDENT)
+			.userRole(UserRole.TEMP)
 			.socialProvider(socialProvider)
 			.socialId(socialId)
 			.temperature("0")
