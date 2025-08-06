@@ -1,6 +1,6 @@
 package hufs.lion.team404.auth.dto;
 
-import hufs.lion.team404.auth.domain.User;
+import hufs.lion.team404.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -30,7 +30,7 @@ public class OAuthAttributes {
         this.profileImageUrl = profileImageUrl;
     }
 
-    private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
+    public static OAuthAttributes ofKakao(Map<String, Object> attributes) {
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
 
@@ -40,17 +40,16 @@ public class OAuthAttributes {
                 .gender(String.valueOf(kakaoAccount.get("gender")))
                 .age(String.valueOf(kakaoAccount.get("age")))
                 .profileImageUrl(String.valueOf(kakaoProfile.get("profile_image_url")))
-                .nameAttributesKey(userNameAttributeName)
                 .attributes(attributes)
                 .build();
     }
 
     public User toEntity() {
-        return User.builder()
-                .name(name)
-                .email(email)
-                .roles(List.of("USER"))
-                .build();
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setProfileImage(profileImageUrl);
+        return user;
     }
 
 }

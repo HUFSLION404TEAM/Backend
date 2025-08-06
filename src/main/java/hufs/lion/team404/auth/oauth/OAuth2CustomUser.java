@@ -13,9 +13,17 @@ import java.util.Map;
 @Getter
 public class OAuth2CustomUser implements OAuth2User, Serializable {
 
+    private String registrationId;
     private Map<String, Object> attributes;
     private List<GrantedAuthority> authorities;
     private String email;
+
+    public OAuth2CustomUser(String registrationId, Map<String, Object> attributes, List<GrantedAuthority> authorities, String email) {
+        this.registrationId = "kakao";
+        this.attributes = attributes;
+        this.authorities = authorities;
+        this.email = email;
+    }
 
     @Override
     public Map<String, Object> getAttributes() {

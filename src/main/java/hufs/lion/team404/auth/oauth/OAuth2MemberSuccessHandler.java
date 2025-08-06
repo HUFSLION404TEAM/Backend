@@ -1,5 +1,8 @@
 package hufs.lion.team404.auth.oauth;
 
+import hufs.lion.team404.auth.jwt.JwtTokenizer;
+import hufs.lion.team404.service.UserService;
+import hufs.lion.team404.entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,7 +36,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         String email = oAuth2User.getEmail(); // OAuth2User로부터 Resource Owner의 이메일 주소를 얻음 객체로부터
         List<String> authorities = authorityUtils.createRoles(email);           // 권한 정보 생성
-        authorities.stream().map(authoritie -> authoritie.replaceFirst("a", "")).collect(Collectors.toList());
+        authorities = authorities.stream().map(authoritie -> authoritie.replaceFirst("a", "")).collect(Collectors.toList());
 
         redirect(request, response, email, authorities);  // Access Token과 Refresh Token을 Frontend에 전달하기 위해 Redirect
     }
@@ -42,11 +45,12 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         log.info("Token 생성 시작");
         String accessToken = delegateAccessToken(email, authorities);  // Access Token 생성
         String refreshToken = delegateRefreshToken(email);     // Refresh Token 생성
-        User user = userService.findByEmail(email);
-        Long userId = user.getUserId();
-        String username = user.getUsername();
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        Long userId = user.getId();
+        String username = user.getName();
         user.setRefreshToken(refreshToken);
-        userService.saveUser(user);
+        userService.save(user);
 
         String uri = createURI(accessToken, refreshToken, userId, username).toString();   // Access Token과 Refresh Token을 포함한 URL을 생성
         getRedirectStrategy().sendRedirect(request, response, uri);   // sendRedirect() 메서드를 이용해 Frontend 애플리케이션 쪽으로 리다이렉트
@@ -88,8 +92,9 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         return UriComponentsBuilder
                 .newInstance()
-                .scheme("https")
-                .host("66challenge.shop")
+                .scheme("http")
+                .host("localhost")
+                .port(8080)
                 .path("/oauth")
                 .queryParams(queryParams)
                 .build()

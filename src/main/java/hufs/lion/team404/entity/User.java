@@ -81,4 +81,7 @@ public class User {
 
 	@OneToMany(mappedBy = "payee", cascade = CascadeType.ALL)
 	private List<Payment> receivedPayments;
+
+	@Column(nullable = true)
+	private String refreshToken;
 }

@@ -1,8 +1,8 @@
 package hufs.lion.team404.auth.oauth;
 
-import hufs.lion.team404.auth.domain.User;
+import hufs.lion.team404.entity.User;
 import hufs.lion.team404.auth.dto.OAuthAttributes;
-import hufs.lion.team404.auth.repository.UserRepository;
+import hufs.lion.team404.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,12 +45,16 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String email = user.getEmail();
         List<GrantedAuthority> authorities = authorityUtils.createAuthorities(email);
 
-        return new OAuth2CustomUser(registrationId, originAttributes, authorities, email);
+        return new OAuth2CustomUser("kakao", originAttributes, authorities, email);
     }
 
     private User saveOrUpdate(OAuthAttributes authAttributes) {
         User user = userRepository.findByEmail(authAttributes.getEmail())
-                .map(entity -> entity.update(authAttributes.getName(), authAttributes.getProfileImageUrl))
+                .map(existingUser -> {
+                    existingUser.setName(authAttributes.getName());
+                    existingUser.setProfileImage(authAttributes.getProfileImageUrl());
+                    return existingUser;
+                })
                 .orElse(authAttributes.toEntity());
 
         return userRepository.save(user);
