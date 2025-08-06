@@ -1,6 +1,6 @@
 package hufs.lion.team404.service;
 
-import hufs.lion.team404.entity.Favorite;
+import hufs.lion.team404.domain.entity.Favorite;
 import hufs.lion.team404.repository.FavoriteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package hufs.lion.team404.service;
 
-import hufs.lion.team404.entity.AiMatchingSummary;
+import hufs.lion.team404.domain.entity.AiMatchingSummary;
 import hufs.lion.team404.repository.AiMatchingSummaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

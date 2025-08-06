@@ -1,6 +1,6 @@
 package hufs.lion.team404.repository;
 
-import hufs.lion.team404.entity.Student;
+import hufs.lion.team404.domain.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

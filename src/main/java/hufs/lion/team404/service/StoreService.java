@@ -1,6 +1,6 @@
 package hufs.lion.team404.service;
 
-import hufs.lion.team404.entity.Store;
+import hufs.lion.team404.domain.entity.Store;
 import hufs.lion.team404.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

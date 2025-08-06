@@ -1,4 +1,4 @@
-package hufs.lion.team404.entity;
+package hufs.lion.team404.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -7,36 +7,38 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "stores")
+@Table(name = "favorites")
 @Data
 @NoArgsConstructor
-public class Store {
+public class Favorite {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
+    @ManyToOne
+    @JoinColumn(name = "target_student_id")
+    private Student targetStudent;
+    
+    @ManyToOne
+    @JoinColumn(name = "target_project_request_id")
+    private ProjectRequest targetProjectRequest;
+    
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String storeName;
-    
-    @Column(unique = true, nullable = false)
-    private String businessNumber;
-    
-    private String address;
-    
-    private String contact;
-    
-    private String category;
+    private FavoriteType favoriteType;
     
     @Column(columnDefinition = "TEXT")
-    private String introduction;
+    private String memo;
+    
+    @Column(nullable = false)
+    private Boolean isNotificationEnabled = false;
     
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -44,7 +46,7 @@ public class Store {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
     
-    // 연관관계
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-    private List<ProjectRequest> projectRequests;
+    public enum FavoriteType {
+        STUDENT, PROJECT_REQUEST
+    }
 }
