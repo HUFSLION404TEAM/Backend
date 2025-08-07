@@ -3,6 +3,7 @@ package hufs.lion.team404.oauth;
 import java.util.Map;
 
 import hufs.lion.team404.domain.entity.User;
+import hufs.lion.team404.domain.enums.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -30,7 +31,6 @@ public class OAuthAttributes {
 
 	public static OAuthAttributes of(String registrationId, String userNameAttributeName,
 		Map<String, Object> attributes) {
-		System.out.println("sda");
 		if ("naver".equals(registrationId)) {
 			return ofNaver(registrationId, userNameAttributeName, attributes);
 		} else if ("kakao".equals(registrationId)) {

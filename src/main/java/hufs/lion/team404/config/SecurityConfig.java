@@ -5,7 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import hufs.lion.team404.oauth.OAuth2AuthenticationSuccessHandler;
+import hufs.lion.team404.oauth.jwt.JwtAuthenticationFilter;
+import hufs.lion.team404.oauth.jwt.JwtTokenProvider;
 import hufs.lion.team404.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final CustomOAuth2UserService customOAuth2UserService;
+	private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+	private final JwtTokenProvider jwtTokenProvider;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -30,11 +36,12 @@ public class SecurityConfig {
 			.logout(logout -> logout.logoutSuccessUrl("/")) //로그아웃 시 리다이렉트될 URL을 설정
 			.oauth2Login(oauth2Login -> oauth2Login
 				.defaultSuccessUrl("/")// OAuth 2 로그인 설정 진입점
+				.successHandler(oAuth2AuthenticationSuccessHandler)
 				.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
 					.userService(customOAuth2UserService) // OAuth 2 로그인 성공 이후 사용자 정보를 가져올 때의 설정
 				)
-			);
-
+			)
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 }

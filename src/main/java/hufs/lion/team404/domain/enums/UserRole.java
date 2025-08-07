@@ -1,4 +1,4 @@
-package hufs.lion.team404.oauth;
+package hufs.lion.team404.domain.enums;
 
 public enum UserRole {
 	TEMP("미선택"), STUDENT("대학생"), STORE("소상공인"), ADMIN("관리자");
