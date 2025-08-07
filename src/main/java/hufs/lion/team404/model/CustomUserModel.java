@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserModel {
+public class CustomUserModel {
 
 	private final UserService userService;
 

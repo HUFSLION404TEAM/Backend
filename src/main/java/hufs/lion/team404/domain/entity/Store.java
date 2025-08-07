@@ -1,6 +1,7 @@
 package hufs.lion.team404.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -47,4 +48,16 @@ public class Store {
     // 연관관계
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<ProjectRequest> projectRequests;
+
+    @Builder
+    public Store(User user, String storeName, String businessNumber, String address, String contact, String category,
+        String introduction) {
+        this.user = user;
+        this.storeName = storeName;
+        this.businessNumber = businessNumber;
+        this.address = address;
+        this.contact = contact;
+        this.category = category;
+        this.introduction = introduction;
+    }
 }
