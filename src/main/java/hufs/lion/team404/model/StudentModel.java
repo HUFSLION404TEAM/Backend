@@ -8,6 +8,7 @@ import hufs.lion.team404.domain.dto.request.StudentCreateRequestDto;
 import hufs.lion.team404.domain.entity.Store;
 import hufs.lion.team404.domain.entity.Student;
 import hufs.lion.team404.domain.entity.User;
+import hufs.lion.team404.domain.enums.UserRole;
 import hufs.lion.team404.repository.StudentRepository;
 import hufs.lion.team404.service.StudentService;
 import hufs.lion.team404.service.UserService;
@@ -32,6 +33,7 @@ public class StudentModel {
 			.user(user)
 			.build();
 
+		user.setUserRole(UserRole.STUDENT);
 		studentService.save(student);
 	}
 }

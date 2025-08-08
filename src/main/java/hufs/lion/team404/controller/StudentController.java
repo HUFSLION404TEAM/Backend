@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 public class StudentController {
 	private final StudentModel studentModel;
 
-	@PostMapping("/")
+	@PostMapping("/create")
 	@Operation(
 		summary = "학생 정보 생성", 
 		description = "새로운 학생 정보를 생성합니다.",

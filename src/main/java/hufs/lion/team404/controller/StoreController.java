@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 public class StoreController {
 	private final StoreModel storeModel;
 
-	@PostMapping("/")
+	@PostMapping("/create")
 	@Operation(
 		summary = "업체 정보 생성", 
 		description = "새로운 업체 정보를 생성합니다.",

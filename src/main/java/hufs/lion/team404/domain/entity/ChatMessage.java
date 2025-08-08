@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -54,6 +55,18 @@ public class ChatMessage {
 	private LocalDateTime createdAt;
 
 	public enum MessageType {
-		TEXT, IMAGE, FILE, SYSTEM
+		TEXT, IMAGE, FILE, SYSTEM, ENTER, QUIT
+	}
+
+	@Builder
+	public ChatMessage(ChatRoom chatRoom, User sender, MessageType messageType, String content, String fileUrl,
+		Boolean isReadByStore, Boolean isReadByStudent) {
+		this.chatRoom = chatRoom;
+		this.sender = sender;
+		this.messageType = messageType;
+		this.content = content;
+		this.fileUrl = fileUrl;
+		this.isReadByStore = isReadByStore;
+		this.isReadByStudent = isReadByStudent;
 	}
 }

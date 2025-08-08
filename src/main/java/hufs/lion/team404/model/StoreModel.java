@@ -6,6 +6,7 @@ import org.webjars.NotFoundException;
 import hufs.lion.team404.domain.dto.request.StoreCreateRequestDto;
 import hufs.lion.team404.domain.entity.Store;
 import hufs.lion.team404.domain.entity.User;
+import hufs.lion.team404.domain.enums.UserRole;
 import hufs.lion.team404.service.StoreService;
 import hufs.lion.team404.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,8 @@ public class StoreModel {
 			.businessNumber(storeCreateRequestDto.getBusinessNumber())
 			.user(user)
 			.build();
+
+		user.setUserRole(UserRole.STORE);
 
 		storeService.save(store);
 	}

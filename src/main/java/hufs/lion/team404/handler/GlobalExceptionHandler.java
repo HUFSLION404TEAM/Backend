@@ -1,7 +1,8 @@
-package hufs.lion.team404.exception;
+package hufs.lion.team404.handler;
 
 import hufs.lion.team404.domain.dto.response.ApiResponse;
 import hufs.lion.team404.domain.enums.ErrorCode;
+import hufs.lion.team404.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
