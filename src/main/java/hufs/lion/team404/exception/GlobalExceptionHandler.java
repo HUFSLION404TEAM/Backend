@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
  * 전역 예외 처리 핸들러
  */
 @Slf4j
-@RestControllerAdvice
 public class GlobalExceptionHandler {
     
     /**
