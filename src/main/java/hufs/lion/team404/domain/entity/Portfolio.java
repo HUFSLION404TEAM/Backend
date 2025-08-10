@@ -25,6 +25,10 @@ public class Portfolio {
     
     @Column(nullable = false)
     private String title;
+
+    // 지역 추가
+    @Column(columnDefinition = "TEXT")
+    private String region;
     
     @Column(columnDefinition = "TEXT")
     private String representSentence;
