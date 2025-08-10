@@ -18,6 +18,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import hufs.lion.team404.domain.dto.ChatMessageDto;
 import hufs.lion.team404.domain.dto.ChatSession;
 import hufs.lion.team404.domain.entity.ChatMessage;
 import hufs.lion.team404.model.ChatModel;
@@ -40,19 +41,64 @@ public class WebSocketChatHandler implements WebSocketHandler {
 	// 소켓 연결 성공
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+		// 먼저 헤더에서 확인
 		HttpHeaders headers = session.getHandshakeHeaders();
 		String authHeader = headers.getFirst("Authorization");
 		String roomIdHeader = headers.getFirst("Room-Id");
-
+		
+		String token = null;
+		Long roomId = null;
+		
+		// 헤더에서 토큰을 찾지 못한 경우 쿼리 파라미터에서 확인
 		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			log.warn("Invalid Authorization header");
+			String uri = session.getUri().toString();
+			log.info("WebSocket URI: {}", uri);
+			
+			// 쿼리 파라미터에서 토큰과 룸ID 추출
+			String query = session.getUri().getQuery();
+			if (query != null) {
+				String[] params = query.split("&");
+				for (String param : params) {
+					String[] keyValue = param.split("=");
+					if (keyValue.length == 2) {
+						if ("token".equals(keyValue[0])) {
+							token = keyValue[1];
+						} else if ("roomId".equals(keyValue[0])) {
+							try {
+								roomId = Long.parseLong(keyValue[1]);
+							} catch (NumberFormatException e) {
+								log.warn("Invalid roomId format: {}", keyValue[1]);
+							}
+						}
+					}
+				}
+			}
+			
+			if (token == null || roomId == null) {
+				log.warn("Missing token or roomId in query parameters");
+				session.close(CloseStatus.NOT_ACCEPTABLE);
+				return;
+			}
+		} else {
+			// 헤더에서 토큰 추출
+			token = authHeader.substring(7);
+			try {
+				roomId = Long.parseLong(roomIdHeader);
+			} catch (NumberFormatException e) {
+				log.warn("Invalid Room-Id header: {}", roomIdHeader);
+				session.close(CloseStatus.NOT_ACCEPTABLE);
+				return;
+			}
+		}
+
+		Long userId;
+		try {
+			userId = jwtTokenProvider.getUserId(token);
+		} catch (Exception e) {
+			log.warn("Invalid JWT token: {}", e.getMessage());
 			session.close(CloseStatus.NOT_ACCEPTABLE);
 			return;
 		}
-
-		String token = authHeader.substring(7);
-		Long userId = jwtTokenProvider.getUserId(token);
-		Long roomId = Long.parseLong(roomIdHeader);
 
 		// 채팅방 접근 권한 확인
 		if (!chatModel.hasPermission(userId, roomId)) {
@@ -104,16 +150,28 @@ public class WebSocketChatHandler implements WebSocketHandler {
 			chatMessageDto.getMessageType().equals(ChatMessage.MessageType.FILE)) {
 
 			ChatMessage savedMessage = chatModel.saveMessageToDatabase(chatMessageDto, userId, chatRoomId);
-
-			// 저장된 메시지를 다시 클라이언트들에게 전송 (ID 포함해서)
-			sendMessageToChatRoom(savedMessage, chatRoomSessionIds);
+			
+			// Entity를 DTO로 변환하여 전송 (순환 참조 방지)
+			ChatMessageDto responseDto = ChatMessageDto.fromEntity(savedMessage);
+			
+			// 발신자 제외하고 전송
+			sendMessageToChatRoomExcludingSender(responseDto, chatRoomSessionIds, session.getId());
 
 		} else if (chatMessageDto.getMessageType().equals(ChatMessage.MessageType.ENTER)) {
-			// 시스템 메시지 (DB 저장 안함)
-			sendMessageToChatRoom(chatMessageDto, chatRoomSessionIds);
+			// 시스템 메시지 (DB 저장 안함) - 간단한 DTO 생성
+			ChatMessageDto enterDto = ChatMessageDto.builder()
+				.content(chatMessageDto.getContent())
+				.messageType(ChatMessage.MessageType.ENTER)
+				.senderId(userId)
+				.senderName("시스템")
+				.chatRoomId(chatRoomId)
+				.createdAt(LocalDateTime.now())
+				.build();
+			// 입장 메시지는 모든 사람에게 전송 (본인 포함)
+			sendMessageToChatRoom(enterDto, chatRoomSessionIds);
 		}
 
-		if (chatRoomSessionIds.size() >= 3) {
+		if (chatRoomSessionIds != null && chatRoomSessionIds.size() >= 3) {
 			removeClosedSession(chatRoomSessionIds);
 		}
 	}
@@ -123,19 +181,68 @@ public class WebSocketChatHandler implements WebSocketHandler {
 		sessionIds.removeIf(sessionId -> !sessionMap.containsKey(sessionId));
 	}
 
-	// 세션에게 메세지 전송
-	private void sendMessageToChatRoom(ChatMessage chatMessageDto, Set<String> sessionIds) {
+	// 세션에게 메세지 전송 (DTO 버전)
+	private void sendMessageToChatRoom(ChatMessageDto chatMessageDto, Set<String> sessionIds) {
+		log.info("브로드캐스팅: 메시지 '{}' 를 {} 개 세션에게 전송", 
+			chatMessageDto.getContent(), sessionIds != null ? sessionIds.size() : 0);
+		
+		if (sessionIds == null || sessionIds.isEmpty()) {
+			log.warn("전송할 세션이 없습니다.");
+			return;
+		}
+		
 		sessionIds.parallelStream()
-			.map(sessionMap::get)
+			.map(sessionId -> {
+				ChatSession chatSession = sessionMap.get(sessionId);
+				if (chatSession == null) {
+					log.warn("세션 ID {}에 대한 ChatSession을 찾을 수 없습니다", sessionId);
+				}
+				return chatSession;
+			})
 			.filter(Objects::nonNull)
-			.forEach(chatSession -> sendMessage(chatSession.getSession(), chatMessageDto));
+			.forEach(chatSession -> {
+				log.info("유저 {}에게 메시지 전송 중...", chatSession.getUserId());
+				sendMessage(chatSession.getSession(), chatMessageDto);
+			});
+	}
+
+	// 발신자 제외하고 메시지 전송 (DTO 버전)
+	private void sendMessageToChatRoomExcludingSender(ChatMessageDto chatMessageDto, Set<String> sessionIds, String senderSessionId) {
+		log.info("브로드캐스팅 (발신자 제외): 메시지 '{}' 를 {} 개 세션에게 전송 (발신자 세션 {} 제외)", 
+			chatMessageDto.getContent(), sessionIds != null ? sessionIds.size() - 1 : 0, senderSessionId);
+		
+		if (sessionIds == null || sessionIds.isEmpty()) {
+			log.warn("전송할 세션이 없습니다.");
+			return;
+		}
+		
+		sessionIds.parallelStream()
+			.filter(sessionId -> !sessionId.equals(senderSessionId)) // 발신자 세션 제외
+			.map(sessionId -> {
+				ChatSession chatSession = sessionMap.get(sessionId);
+				if (chatSession == null) {
+					log.warn("세션 ID {}에 대한 ChatSession을 찾을 수 없습니다", sessionId);
+				}
+				return chatSession;
+			})
+			.filter(Objects::nonNull)
+			.forEach(chatSession -> {
+				log.info("유저 {}에게 메시지 전송 중... (발신자 제외)", chatSession.getUserId());
+				sendMessage(chatSession.getSession(), chatMessageDto);
+			});
 	}
 
 	public <T> void sendMessage(WebSocketSession session, T message) {
 		try {
-			session.sendMessage(new TextMessage(mapper.writeValueAsBytes(message)));
+			if (session.isOpen()) {
+				String messageJson = mapper.writeValueAsString(message);
+				log.info("세션 {}에 메시지 전송: {}", session.getId(), messageJson);
+				session.sendMessage(new TextMessage(messageJson));
+			} else {
+				log.warn("세션 {}이 닫혀있어 메시지를 전송할 수 없습니다", session.getId());
+			}
 		} catch (IOException e) {
-			log.error(e.getMessage(), e);
+			log.error("메시지 전송 실패: {}", e.getMessage(), e);
 		}
 	}
 
