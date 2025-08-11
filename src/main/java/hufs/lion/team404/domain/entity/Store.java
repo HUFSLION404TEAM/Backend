@@ -46,7 +46,7 @@ public class Store {
     private LocalDateTime updatedAt;
 
     // 연관관계
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "store")
     private List<ProjectRequest> projectRequests;
 
     @Builder

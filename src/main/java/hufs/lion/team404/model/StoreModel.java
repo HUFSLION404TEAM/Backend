@@ -4,10 +4,17 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.server.ResponseStatusException;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import org.springframework.transaction.annotation.Transactional;
 import hufs.lion.team404.domain.dto.request.StoreUpdateRequestDto;
 import hufs.lion.team404.domain.dto.response.StoreReadResponseDto;
 import hufs.lion.team404.domain.dto.request.StoreCreateRequestDto;
 import hufs.lion.team404.domain.dto.response.StoreReadResponseDto;
+import hufs.lion.team404.domain.dto.request.StoreFilterRequest;
+import hufs.lion.team404.domain.dto.response.StoreSummaryResponse;
 import hufs.lion.team404.domain.entity.Store;
 import hufs.lion.team404.domain.entity.User;
 import hufs.lion.team404.domain.enums.UserRole;
@@ -22,21 +29,26 @@ public class StoreModel {
 	private final StoreService storeService;
 	private final UserService userService;
 
-	public void createStore(StoreCreateRequestDto storeCreateRequestDto, Long user_id) {
-		User user = userService.findById(user_id).orElseThrow(() -> new NotFoundException("User not found"));
-
+	@Transactional
+	public void createStore(StoreCreateRequestDto dto, Long userId) {
+		User user = userService.findById(userId)
+			.orElseThrow(() -> new NotFoundException("User not found"));
+		if (storeService.hasStoreForUser(userId)) {
+			throw new ResponseStatusException(CONFLICT, "이미 해당 사용자에 등록된 업체가 있습니다.");
+		}
+		if (storeService.existsByBusinessNumber(dto.getBusinessNumber())) {
+			throw new ResponseStatusException(CONFLICT, "이미 등록된 사업자번호입니다.");
+		}
 		Store store = Store.builder()
-			.storeName(storeCreateRequestDto.getName())
-			.address(storeCreateRequestDto.getAddress())
-			.contact(storeCreateRequestDto.getPhone())
-			.category(storeCreateRequestDto.getType())
-			.introduction(storeCreateRequestDto.getIntroduction())
-			.businessNumber(storeCreateRequestDto.getBusinessNumber())
+			.storeName(dto.getName())
+			.address(dto.getAddress())
+			.contact(dto.getPhone())
+			.category(dto.getType())
+			.introduction(dto.getIntroduction())
+			.businessNumber(dto.getBusinessNumber())
 			.user(user)
 			.build();
-
 		user.setUserRole(UserRole.STORE);
-
 		storeService.save(store);
 	}
 	public StoreReadResponseDto getStoreById(Long storeId) {
@@ -57,4 +69,12 @@ public class StoreModel {
 	public void deleteStore(Long storeId, Long userId) {
 		storeService.deleteStore(storeId, userId);
 	}
+	public Page<StoreSummaryResponse> getStoresPage(Pageable pageable) {
+		return storeService.listAll(pageable);
+	}
+	public Page<StoreSummaryResponse> searchStores(StoreFilterRequest filter, Pageable pageable) {
+		return storeService.listWithFilter(filter, pageable);
+	}
+
+
 }

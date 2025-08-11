@@ -5,10 +5,15 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import hufs.lion.team404.domain.entity.Store;
 import hufs.lion.team404.repository.StoreRepository;
 import hufs.lion.team404.domain.dto.request.StoreUpdateRequestDto;
+import hufs.lion.team404.domain.dto.request.StoreFilterRequest;
+import hufs.lion.team404.domain.dto.response.StoreSummaryResponse;
+import hufs.lion.team404.domain.dto.response.StoreDetailResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -87,7 +92,31 @@ public class StoreService {
         if (!store.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("해당 업체를 삭제할 권한이 없습니다.");
         }
-        storeRepository.delete(store); // 물리 삭제
+        storeRepository.delete(store);
     }
+    public Page<StoreSummaryResponse> listAll(Pageable pageable) {
+        return storeRepository.findAll(pageable)
+            .map(StoreSummaryResponse::from);
+    }
+
+
+    public Page<StoreSummaryResponse> listWithFilter(StoreFilterRequest f, Pageable pageable) {
+        return storeRepository.search(
+            f.keyword(), f.category(), f.address(), pageable
+        ).map(StoreSummaryResponse::from);
+    }
+
+
+    public StoreDetailResponse getDetail(Long id) {
+        Store s = storeRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("해당 가게를 찾을 수 없습니다.: id=" + id));
+        return StoreDetailResponse.from(s);
+    }
+    public boolean hasStoreForUser(Long userId) {
+        // 이미 findByUserId가 있으니 그대로 활용
+        return storeRepository.findByUserId(userId).isPresent();
+        // (원하면 레포지토리에 existsByUserId(Long) 추가 후 그걸 호출해도 됨)
+    }
+
 }
 

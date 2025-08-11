@@ -60,4 +60,5 @@ public class ChatRoom {
         this.student = student;
         this.initiatedBy = initiatedBy;
     }
+
 }
