@@ -6,6 +6,8 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import hufs.lion.team404.domain.enums.UserRole;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -52,38 +54,49 @@ public class User {
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 
-	// 연관관계
+	// 연관관계 - 순환 참조 방지를 위해 JsonIgnore 추가
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private Student student;
 
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private Store store;
 
 	@OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<ChatMessage> sentMessages;
 
 	@OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Review> writtenReviews;
 
 	@OneToMany(mappedBy = "reviewee", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Review> receivedReviews;
 
 	@OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Report> reportsMade;
 
 	@OneToMany(mappedBy = "reported", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Report> reportsReceived;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Notification> notifications;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Favorite> favorites;
 
 	@OneToMany(mappedBy = "payer", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Payment> payments;
 
 	@OneToMany(mappedBy = "payee", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Payment> receivedPayments;
 
 	@Enumerated(EnumType.STRING)
