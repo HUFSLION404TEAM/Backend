@@ -59,6 +59,7 @@ public class PortfolioProjectService {
         project.setCompetency(dto.getCompetency());
         project.setPrize(dto.getPrize());
         project.setDisplayOrder(dto.getDisplayOrder());
+        project.setIsPublic(dto.getIsPublic());
     }
 
     

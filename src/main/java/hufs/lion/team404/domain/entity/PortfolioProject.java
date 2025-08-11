@@ -51,10 +51,15 @@ public class PortfolioProject {
     
     @Column(nullable = false)
     private Integer displayOrder = 0;
+
+    @Column(nullable = false)
+    private Boolean isPublic = true;
     
     @CreationTimestamp
     private LocalDateTime createdAt;
     
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+
 }

@@ -36,8 +36,8 @@ public class Portfolio {
     @Column(columnDefinition = "TEXT")
     private String career;
     
-    @Column(nullable = false)
-    private Boolean isPublic = true;
+
+
     
     @CreationTimestamp
     private LocalDateTime createdAt;

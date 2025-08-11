@@ -14,4 +14,5 @@ public class PortfolioProjectUpdateRequestDto {
     private String competency;
     private String prize;
     private Integer displayOrder;
+    private Boolean isPublic;
 }

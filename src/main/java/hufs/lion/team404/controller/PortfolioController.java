@@ -33,7 +33,7 @@ public class PortfolioController {
 
     // 포폴 생성
     // 온보딩에서 만들어지는 최초 포폴
-    @PostMapping("/onboarding")
+    @PostMapping("/mypage/portfolios")
     @Operation(
             summary = "포트폴리오 생성",
             description = "새로운 포트폴리오를 생성합니다.",

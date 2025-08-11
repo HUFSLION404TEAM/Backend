@@ -41,7 +41,6 @@ public class PortfolioModel {
         portfolio.setRegion(portfolioCreateRequestDto.getRegion());
         portfolio.setRepresentSentence(portfolioCreateRequestDto.getRepresentSentence());
         portfolio.setCareer(portfolioCreateRequestDto.getCareer());
-        portfolio.setIsPublic(portfolioCreateRequestDto.getIsPublic());
 
         user.setUserRole(UserRole.STUDENT);
 
@@ -67,7 +66,6 @@ public class PortfolioModel {
                         .region(p.getRegion())
                         .representSentence(p.getRepresentSentence())
                         .career(p.getCareer())
-                        .isPublic(p.getIsPublic())
                         .createdAt(p.getCreatedAt())
                         .updatedAt(p.getUpdatedAt())
                         .build())
@@ -97,7 +95,6 @@ public class PortfolioModel {
                     .region(portfolio.getRegion())
                     .representSentence(portfolio.getRepresentSentence())
                     .career(portfolio.getCareer())
-                    .isPublic(portfolio.getIsPublic())
                     .createdAt(portfolio.getCreatedAt())
                     .updatedAt(portfolio.getUpdatedAt())
                     .build());

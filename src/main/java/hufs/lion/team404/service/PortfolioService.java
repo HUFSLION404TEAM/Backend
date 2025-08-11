@@ -76,7 +76,6 @@ public class PortfolioService {
         p.setRegion(req.getRegion());
         p.setRepresentSentence(req.getRepresentSentence());
         p.setCareer(req.getCareer());
-        p.setIsPublic(req.getIsPublic());
     }
 
 

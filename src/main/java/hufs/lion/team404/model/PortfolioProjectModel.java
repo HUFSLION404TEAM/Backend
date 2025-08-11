@@ -45,6 +45,7 @@ public class PortfolioProjectModel {
         portfolioProject.setCompetency(dto.getCompetency());
         portfolioProject.setPrize(dto.getPrize());
         portfolioProject.setDisplayOrder(dto.getDisplayOrder());
+        portfolioProject.setIsPublic(dto.getIsPublic());
 
         return portfolioProjectService.save(portfolioProject);
     }
@@ -69,6 +70,7 @@ public class PortfolioProjectModel {
                         .competency(p.getCompetency())
                         .prize(p.getPrize())
                         .displayOrder(p.getDisplayOrder())
+                        .isPublic(p.getIsPublic())
                         .build()
                 )
                 .toList();

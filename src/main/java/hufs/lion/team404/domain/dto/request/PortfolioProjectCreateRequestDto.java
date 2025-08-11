@@ -18,4 +18,5 @@ public class PortfolioProjectCreateRequestDto {
     private String competency;
     private String prize;
     private Integer displayOrder;
+    private Boolean isPublic;
 }

@@ -15,7 +15,7 @@ public class PortfolioResponse {
     private String region;
     private String representSentence;
     private String career;
-    private Boolean isPublic;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -26,7 +26,7 @@ public class PortfolioResponse {
         this.region = region;
         this.representSentence = representSentence;
         this.career = career;
-        this.isPublic = isPublic;
+
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

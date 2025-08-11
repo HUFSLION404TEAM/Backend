@@ -24,10 +24,12 @@ public class PortfolioProjectResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private Boolean isPublic;
+
     @Builder
     public PortfolioProjectResponse(Long id, String portfolio, String title, String introduction, String outline,
                                     String work, String process, String result, String grow, String competency,
-                                    String prize, Integer displayOrder, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                                    String prize, Integer displayOrder, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isPublic) {
         this.id = id;
         this.portfolio = portfolio;
         this.title = title;
@@ -42,5 +44,6 @@ public class PortfolioProjectResponse {
         this.displayOrder = displayOrder;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.isPublic = isPublic;
     }
 }
