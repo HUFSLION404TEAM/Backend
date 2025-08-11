@@ -96,7 +96,7 @@ public class PortfolioController {
         String email = authentication.getEmail();
         portfolioModel.updatePortfolio(portfolioId, portfolioUpdateRequestDto, email);
 
-        return ApiResponse.success("포트폴리오가 성공적으로 생성되었습니다.");
+        return ApiResponse.success("포트폴리오가 성공적으로 수정되었습니다.");
     }
 
     @DeleteMapping("/mypage/{portfolioId}")
