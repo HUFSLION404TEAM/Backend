@@ -60,7 +60,12 @@ public enum ErrorCode {
     // 파일 에러
     FILE_UPLOAD_FAILED(HttpStatus.BAD_REQUEST, "FILE_001", "파일 업로드에 실패했습니다."),
     INVALID_FILE_FORMAT(HttpStatus.BAD_REQUEST, "FILE_002", "지원하지 않는 파일 형식입니다."),
-    FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "FILE_003", "파일 크기가 초과되었습니다.");
+    FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "FILE_003", "파일 크기가 초과되었습니다."),
+
+    // 공고 에러
+    IMAGE_COUNT_EXCEEDED(HttpStatus.BAD_REQUEST, "IMAGE_001", "이미지 갯수가 초과되었습니다."),
+    INVALID_INPUT(HttpStatus.BAD_REQUEST, "IMAGE_002", "파일이 비어있습니다.")
+    ;
 
     private final HttpStatus status;
     private final String code;
