@@ -64,19 +64,22 @@ public class PortfolioController {
     @GetMapping("/portfolios")
     @Operation(
             summary = "포트폴리오 조회",
-            description = "포트폴리오를 필터에 맞게 조회합니다."
+            description = "공개 포트폴리오를 대상으로 포트폴리오를 지역/경력/구직상태/키워드에 맞게 조회합니다."
     )
     public ApiResponse<List<PortfolioResponse>> getPortfolios(
-            @Parameter(name = "isPublic", description = "공개 여부 (true/false)")
-            @RequestParam(name = "isPublic", required = false) Boolean isPublic,
-
             @Parameter(name = "region", description = "지역(정확 일치)")
             @RequestParam(name = "region",   required = false) String region,
 
             @Parameter(name = "career", description = "경력(부분 일치)")
-            @RequestParam(name = "career",   required = false) String career
+            @RequestParam(name = "career",   required = false) String career,
+
+            @Parameter(name = "isJobSeeking", description = "구직 상태 (true/false)")
+            @RequestParam(name = "isJobSeeking", required = false) Boolean isJobSeeking,
+
+            @Parameter(name = "q", description = "키워드(제목/한줄소개/경력, 부분 일치)")
+            @RequestParam(required = false) String q
     ) {
-        List<PortfolioResponse> data = portfolioModel.getPortfoliosFiltered(isPublic, region, career);
+        List<PortfolioResponse> data = portfolioModel.searchAndFilterPublic(region, career, isJobSeeking, q);
         return ApiResponse.success("포트폴리오 필터 조회 성공", data);
     }
 

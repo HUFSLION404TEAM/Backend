@@ -76,12 +76,31 @@ public class PortfolioService {
         p.setRegion(req.getRegion());
         p.setRepresentSentence(req.getRepresentSentence());
         p.setCareer(req.getCareer());
+        p.setIsPublic(req.getIsPublic());
+        p.setIsJobSeeking(req.getIsJobSeeking());
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public void deleteById(Long id) {
         portfolioRepository.deleteById(id);
     }
+
+    //  검색
+    public List<Portfolio> searchAndFilterPublic(String region, String career, Boolean isJobSeeking, String q) {
+        return portfolioRepository.searchAndFilterPublic(
+                emptyToNull(region),
+                emptyToNull(career),
+                isJobSeeking,
+                emptyToNull(q)
+        );
+    }
+
+    private String emptyToNull(String s) {
+        if (s == null) return null;
+        s = s.trim();
+        return s.isEmpty() ? null : s;
+    }
+
 
 }

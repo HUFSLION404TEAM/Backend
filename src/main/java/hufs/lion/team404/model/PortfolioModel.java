@@ -41,6 +41,8 @@ public class PortfolioModel {
         portfolio.setRegion(portfolioCreateRequestDto.getRegion());
         portfolio.setRepresentSentence(portfolioCreateRequestDto.getRepresentSentence());
         portfolio.setCareer(portfolioCreateRequestDto.getCareer());
+        portfolio.setIsPublic(portfolioCreateRequestDto.getIsPublic());
+        portfolio.setIsJobSeeking(portfolioCreateRequestDto.getIsJobSeeking());
 
         user.setUserRole(UserRole.STUDENT);
 
@@ -66,41 +68,45 @@ public class PortfolioModel {
                         .region(p.getRegion())
                         .representSentence(p.getRepresentSentence())
                         .career(p.getCareer())
+                        .isPublic(p.getIsPublic())
+                        .isJobSeeking(p.getIsJobSeeking())
                         .createdAt(p.getCreatedAt())
                         .updatedAt(p.getUpdatedAt())
                         .build())
                 .toList();
     }
 
-    // 조회 - 필터링 조회 (공개, 지역, 경력)
-    @Transactional(readOnly = true)
-    public List<PortfolioResponse> getPortfoliosFiltered(Boolean isPublic, String region, String career){
-        boolean hasRegion = region != null && !region.isBlank();
-        boolean hasCareer = career != null && !career.isBlank();
-
-        List<Portfolio> isPublicPortfolio =
-                Boolean.TRUE.equals(isPublic) ? portfolioService.findByIsPublic(true) :
-                Boolean.FALSE.equals(isPublic) ? portfolioService.findByIsPublic(false) :
-                        portfolioService.findAll();
-
-        List<PortfolioResponse> result = new ArrayList<>();
-
-        for (Portfolio portfolio : isPublicPortfolio) {
-            if (hasRegion && (portfolio.getRegion() == null || !portfolio.getRegion().equals(region))) continue;
-            if (hasCareer && (portfolio.getCareer() == null || !portfolio.getCareer().contains(career))) continue;
-
-            result.add(PortfolioResponse.builder()
-                    .id(portfolio.getId())
-                    .title(portfolio.getTitle())
-                    .region(portfolio.getRegion())
-                    .representSentence(portfolio.getRepresentSentence())
-                    .career(portfolio.getCareer())
-                    .createdAt(portfolio.getCreatedAt())
-                    .updatedAt(portfolio.getUpdatedAt())
-                    .build());
-        }
-        return result;
-    }
+//    // 조회 - 필터링 조회 (공개, 지역, 경력)
+//    @Transactional(readOnly = true)
+//    public List<PortfolioResponse> getPortfoliosFiltered(Boolean isPublic, String region, String career){
+//        boolean hasRegion = region != null && !region.isBlank();
+//        boolean hasCareer = career != null && !career.isBlank();
+//
+//        List<Portfolio> isPublicPortfolio =
+//                Boolean.TRUE.equals(isPublic) ? portfolioService.findByIsPublic(true) :
+//                Boolean.FALSE.equals(isPublic) ? portfolioService.findByIsPublic(false) :
+//                        portfolioService.findAll();
+//
+//        List<PortfolioResponse> result = new ArrayList<>();
+//
+//        for (Portfolio portfolio : isPublicPortfolio) {
+//            if (hasRegion && (portfolio.getRegion() == null || !portfolio.getRegion().equals(region))) continue;
+//            if (hasCareer && (portfolio.getCareer() == null || !portfolio.getCareer().contains(career))) continue;
+//
+//            result.add(PortfolioResponse.builder()
+//                    .id(portfolio.getId())
+//                    .title(portfolio.getTitle())
+//                    .region(portfolio.getRegion())
+//                    .representSentence(portfolio.getRepresentSentence())
+//                    .career(portfolio.getCareer())
+//                    .studentName(portfolio.getStudent().getUser().getName())
+//                    .isPublic(portfolio.getIsPublic())
+//                    .createdAt(portfolio.getCreatedAt())
+//                    .updatedAt(portfolio.getUpdatedAt())
+//                    .build());
+//        }
+//        return result;
+//    }
 
     // 수정
     @Transactional
@@ -133,6 +139,28 @@ public class PortfolioModel {
         }
 
         portfolioService.deleteById(portfolioId);
+    }
+
+    //  검색
+    @Transactional(readOnly = true)
+    public List<PortfolioResponse> searchAndFilterPublic(String region, String career, Boolean isJobSeeking, String q) {
+
+        List<Portfolio> list = portfolioService.searchAndFilterPublic(region, career, isJobSeeking, q);
+
+        return list.stream()
+                .map(p -> PortfolioResponse.builder()
+                        .id(p.getId())
+                        .title(p.getTitle())
+                        .region(p.getRegion())
+                        .representSentence(p.getRepresentSentence())
+                        .career(p.getCareer())
+                        .studentName(p.getStudent().getUser().getName())
+                        .isPublic(p.getIsPublic())
+                        .isJobSeeking(p.getIsJobSeeking())
+                        .createdAt(p.getCreatedAt())
+                        .updatedAt(p.getUpdatedAt())
+                        .build())
+                .toList();
     }
 
 

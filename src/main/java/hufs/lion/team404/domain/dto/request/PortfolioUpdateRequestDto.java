@@ -8,4 +8,6 @@ public class PortfolioUpdateRequestDto {
     private String region;
     private String representSentence;
     private String career;
+    private Boolean isPublic;
+    private Boolean isJobSeeking;
 }

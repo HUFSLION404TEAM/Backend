@@ -15,18 +15,22 @@ public class PortfolioResponse {
     private String region;
     private String representSentence;
     private String career;
-
+    private String studentName;
+    private Boolean isPublic;
+    private Boolean isJobSeeking;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @Builder
-    public PortfolioResponse(Long id, String title, String region, String representSentence, String career, Boolean isPublic, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public PortfolioResponse(Long id, String title, String region, String representSentence, String career, String studentName, Boolean isPublic, Boolean isJobSeeking, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.region = region;
         this.representSentence = representSentence;
         this.career = career;
-
+        this.studentName = studentName;
+        this.isPublic = isPublic;
+        this.isJobSeeking = isJobSeeking;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

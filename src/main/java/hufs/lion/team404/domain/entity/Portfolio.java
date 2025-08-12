@@ -29,15 +29,19 @@ public class Portfolio {
     // 지역 추가
     @Column(columnDefinition = "TEXT")
     private String region;
+
+    // 구직 상태 추가
+    @Column(nullable = false)
+    private Boolean isJobSeeking = true;
     
     @Column(columnDefinition = "TEXT")
     private String representSentence;
     
     @Column(columnDefinition = "TEXT")
     private String career;
-    
 
-
+    @Column(nullable = false)
+    private Boolean isPublic = true;
     
     @CreationTimestamp
     private LocalDateTime createdAt;
