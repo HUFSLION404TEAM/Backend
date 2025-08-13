@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -55,4 +56,20 @@ public class Portfolio {
 
 	@OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PortfolioImage> images = new ArrayList<>();
+
+	@Builder
+	public Portfolio(Student student, String title, String progressPeriod, boolean prize, String workDoneProgress, String result, String felt, boolean isPrivate,
+					 LocalDateTime createdAt, LocalDateTime updatedAt) {
+
+		this.student = student;
+		this.title = title;
+		this.progressPeriod = progressPeriod;
+		this.prize = prize;
+		this.workDoneProgress = workDoneProgress;
+		this.result = result;
+		this.felt = felt;
+		this.isPrivate = isPrivate;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+	}
 }
