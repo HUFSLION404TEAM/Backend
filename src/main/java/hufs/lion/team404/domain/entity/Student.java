@@ -1,6 +1,5 @@
 package hufs.lion.team404.domain.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
