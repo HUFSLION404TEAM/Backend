@@ -49,6 +49,8 @@ public class Store {
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<ProjectRequest> projectRequests;
 
+
+
     @Builder
     public Store(User user, String storeName, String businessNumber, String address, String contact, String category,
         String introduction) {
