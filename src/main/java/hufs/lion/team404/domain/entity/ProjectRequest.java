@@ -1,6 +1,7 @@
 package hufs.lion.team404.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -80,5 +81,33 @@ public class ProjectRequest {
     
     public enum Status {
         ACTIVE, CLOSED, MATCHED
+    }
+
+    @Builder
+    public ProjectRequest(Store store, String title, String projectOverview, LocalDate startDate, LocalDate endDate, Integer estimatedDuration,
+                          String detailedTasks, String requiredSkills,
+                          Integer budget, String paymentMethod, String workLocation, String workSchedule,
+                          String preferredMajor, Integer minGrade, String requiredExperience,
+                          String additionalNotes, ProjectRequest.Status status, List<Matching> matchings) {
+
+        this.store = store;
+        this.title = title;
+        this.projectOverview = projectOverview;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.estimatedDuration = estimatedDuration;
+        this.detailedTasks = detailedTasks;
+        this.requiredSkills = requiredSkills;
+        this.budget = budget;
+        this.paymentMethod = paymentMethod;
+        this.workLocation = workLocation;
+        this.workSchedule = workSchedule;
+        this.preferredMajor = preferredMajor;
+        this.minGrade = minGrade;
+        this.requiredExperience = requiredExperience;
+        this.additionalNotes = additionalNotes;
+        this.status = status;
+        this.matchings = matchings;
+
     }
 }

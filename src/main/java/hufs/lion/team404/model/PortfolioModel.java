@@ -81,16 +81,16 @@ public class PortfolioModel {
 		}
 		return portfolio.getId();
 	}
-
-	// 전체 포폴 조회
-	@Transactional(readOnly = true)
-	public List<Portfolio> getAllPortfolios() {
-		portfolioService.findAll().stream().map(portfolio -> {
-			return PortfolioResponse.builder()
-				.career(portfolio.get)
-		})
-		return portfolioService.findAll();
-	}
+//
+//	// 전체 포폴 조회
+//	@Transactional(readOnly = true)
+//	public List<Portfolio> getAllPortfolios() {
+//		portfolioService.findAll().stream().map(portfolio -> {
+//			return PortfolioResponse.builder()
+//				.career(portfolio.get)
+//		})
+//		return portfolioService.findAll();
+//	}
 
 	// 포트포리오 조회 (포폴 ID)
 	@Transactional(readOnly = true)

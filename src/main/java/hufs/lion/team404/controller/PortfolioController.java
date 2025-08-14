@@ -59,17 +59,17 @@ public class PortfolioController {
 		return ApiResponse.success(portfolio_id);
 	}
 
-	@GetMapping("/")
-	@Operation(
-		summary = "전체 포트폴리오 조회",
-		description = "전체 포트폴리오를 조회합니다."
-	)
-	public ApiResponse<List<Portfolio>> getAllPortfolios() {
-
-		List<Portfolio> portfolios = portfolioModel.getAllPortfolios();
-
-		return ApiResponse.success("포트폴리오가 성공적으로 조회되었습니다.", portfolios);
-	}
+//	@GetMapping("/")
+//	@Operation(
+//		summary = "전체 포트폴리오 조회",
+//		description = "전체 포트폴리오를 조회합니다."
+//	)
+//	public ApiResponse<List<Portfolio>> getAllPortfolios() {
+//
+//		List<Portfolio> portfolios = portfolioModel.getAllPortfolios();
+//
+//		return ApiResponse.success("포트폴리오가 성공적으로 조회되었습니다.", portfolios);
+//	}
 
 	@GetMapping("/{portfolioId}")
 	@Operation(
