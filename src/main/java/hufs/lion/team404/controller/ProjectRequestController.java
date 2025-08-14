@@ -54,4 +54,21 @@ public class ProjectRequestController {
                 requiredExperience, additionalNotes, userPrincipal.getId());
         return ApiResponse.success(projectRequest_id);
     }
+
+
+    @DeleteMapping("/{projectRequestId}")
+    @Operation(
+            summary = "의뢰서 삭제",
+            description = "의뢰서를 삭제합니다.",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
+    public ApiResponse<?> deleteProjectRequest (
+            @PathVariable("projectRequestId") Long projectRequestId,
+            @AuthenticationPrincipal UserPrincipal authentication) {
+
+        Long id = authentication.getId();
+        projectRequestModel.deleteProjectRequest(projectRequestId, id);
+
+        return ApiResponse.success("포트폴리오가 삭제되었습니다.");
+    }
 }

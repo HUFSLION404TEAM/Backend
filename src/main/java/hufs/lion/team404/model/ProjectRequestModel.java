@@ -59,4 +59,24 @@ public class ProjectRequestModel {
         ProjectRequest save = projectRequestService.save(projectRequest);
         return save.getId();
     }
+
+    // 의뢰서 삭제
+    public void deleteProjectRequest(Long projectRequestId, Long id) {
+        User user = userService.findById(id)
+                .orElseThrow(() -> new NotFoundException("User Not Found"));
+
+        Store store = user.getStore();
+        if (store == null) {
+            throw new StoreNotFoundException("상점을 찾을 수 없습니다.");
+        }
+
+        ProjectRequest projectRequest = projectRequestService.findById(projectRequestId)
+                .orElseThrow(() -> new IllegalArgumentException("의뢰서를 찾을 수 없습니다."));
+
+        if(!projectRequest.getStore().getId().equals(store.getId())) {
+            throw new IllegalArgumentException("본인의 의뢰서만 삭제할 수 있습니다.");
+        }
+
+        projectRequestService.deleteById(projectRequestId);
+    }
 }
