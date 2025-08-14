@@ -1,37 +1,39 @@
 package hufs.lion.team404.domain.dto.response;
 
+import hufs.lion.team404.domain.entity.Matching;
+import hufs.lion.team404.domain.entity.PortfolioImage;
+import hufs.lion.team404.domain.entity.Student;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 public class PortfolioResponse {
     private Long id;
+    private Long studentId;
     private String title;
-    private String region;
-    private String representSentence;
-    private String career;
-    private String studentName;
-    private Boolean isPublic;
-    private Boolean isJobSeeking;
+    private String progressPeriod;
+    private boolean prize;
+    private String workDoneProgress;
+    private String result;
+    private String felt;
+    private boolean isPrivate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    @Builder
-    public PortfolioResponse(Long id, String title, String region, String representSentence, String career, String studentName, Boolean isPublic, Boolean isJobSeeking, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.title = title;
-        this.region = region;
-        this.representSentence = representSentence;
-        this.career = career;
-        this.studentName = studentName;
-        this.isPublic = isPublic;
-        this.isJobSeeking = isJobSeeking;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
+    private List<Matching> matchings;
+    private List<PortfolioImage> images = new ArrayList<>();
 }
