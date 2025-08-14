@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDate;
@@ -18,7 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectRequestModel {
     private final ProjectRequestService projectRequestService;
-    private final MatchingService matchingService;
     private final UserService userService;
 
 
@@ -58,6 +58,27 @@ public class ProjectRequestModel {
 
         ProjectRequest save = projectRequestService.save(projectRequest);
         return save.getId();
+    }
+
+    // 의뢰서 조회
+    @Transactional(readOnly = true)
+    public ProjectRequest getProjectRequest(Long id) {
+        return projectRequestService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("의뢰서를 찾을 수 없습니다."));
+    }
+
+
+    // 의뢰서 수정
+    @Transactional
+    public Long updateProjectRequest(Long projectRequestId, String title, String projectOverview, LocalDate startDate, LocalDate endDate, Integer estimatedDuration, String detailedTasks, String requiredSkills, Integer budget, String paymentMethod,
+                                     String workLocation, String workSchedule, String preferredMajor, Integer minGrade, String requiredExperience, String additionalNotes, Long userId) {
+
+        return projectRequestService.update(
+                projectRequestId, userId,
+                title, projectOverview, startDate, endDate, estimatedDuration,
+                detailedTasks, requiredSkills, budget, paymentMethod,
+                workLocation, workSchedule, preferredMajor, minGrade,
+                requiredExperience, additionalNotes);
     }
 
     // 의뢰서 삭제

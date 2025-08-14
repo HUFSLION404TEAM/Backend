@@ -99,6 +99,8 @@ public class PortfolioModel {
 			.orElseThrow(() -> new IllegalArgumentException("포트폴리오를 찾을 수 없습니다."));
 	}
 
+
+	// 수정
 	@Transactional
 	public Long updatePortfolio(Long portfolioId, String title, String progressPeriod, Boolean prize,
 		String workDoneProgress, String result, String felt, Boolean isPrivate,

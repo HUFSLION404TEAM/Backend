@@ -1,5 +1,6 @@
 package hufs.lion.team404.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -47,6 +48,7 @@ public class Store {
 
     // 연관관계
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<ProjectRequest> projectRequests;
 
 
