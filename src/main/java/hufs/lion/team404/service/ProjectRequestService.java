@@ -1,5 +1,6 @@
 package hufs.lion.team404.service;
 
+import hufs.lion.team404.domain.dto.request.ProjectRequestUpdateRequestDto;
 import hufs.lion.team404.domain.entity.ProjectRequest;
 import hufs.lion.team404.domain.entity.Store;
 import hufs.lion.team404.domain.entity.User;
@@ -58,8 +59,7 @@ public class ProjectRequestService {
     }
 
     @Transactional
-    public Long update(Long projectRequestId, Long userId, String title, String projectOverview, LocalDate startDate, LocalDate endDate, Integer estimatedDuration, String detailedTasks, String requiredSkills, Integer budget, String paymentMethod,
-                       String workLocation, String workSchedule, String preferredMajor, Integer minGrade, String requiredExperience, String additionalNotes)
+    public ProjectRequest update(Long projectRequestId, ProjectRequestUpdateRequestDto dto, Long userId)
     {
         ProjectRequest projectRequest = projectRequestRepository.findById(projectRequestId)
                 .orElseThrow(() -> new IllegalArgumentException("의뢰서를 찾을 수 없습니다."));
@@ -72,38 +72,38 @@ public class ProjectRequestService {
             throw new IllegalArgumentException("본인의 의뢰서만 수정할 수 있습니다.");
         }
 
-        if (title != null)
-            projectRequest.setTitle(title);
-        if (projectOverview != null)
-            projectRequest.setProjectOverview(projectOverview);
-        if (startDate != null)
-            projectRequest.setStartDate(startDate);
-        if (endDate != null)
-            projectRequest.setEndDate(endDate);
-        if (estimatedDuration != null)
-            projectRequest.setEstimatedDuration(estimatedDuration);
-        if (detailedTasks != null)
-            projectRequest.setDetailedTasks(detailedTasks);
-        if (requiredSkills != null)
-            projectRequest.setRequiredSkills(requiredSkills);
-        if (budget != null)
-            projectRequest.setBudget(budget);
-        if (paymentMethod != null)
-            projectRequest.setPaymentMethod(paymentMethod);
-        if (workLocation != null)
-            projectRequest.setWorkLocation(workLocation);
-        if (workSchedule != null)
-            projectRequest.setWorkSchedule(workSchedule);
-        if (preferredMajor != null)
-            projectRequest.setPreferredMajor(preferredMajor);
-        if (minGrade != null)
-            projectRequest.setMinGrade(minGrade);
-        if (requiredExperience != null)
-            projectRequest.setRequiredExperience(requiredExperience);
-        if (additionalNotes != null)
-            projectRequest.setAdditionalNotes(additionalNotes);
+        if (dto.getTitle() != null && !dto.getTitle().isBlank())
+            projectRequest.setTitle(dto.getTitle());
+        if (dto.getProjectOverview() != null)
+            projectRequest.setProjectOverview(dto.getProjectOverview());
+        if (dto.getStartDate() != null)
+            projectRequest.setStartDate(dto.getStartDate());
+        if (dto.getEndDate() != null)
+            projectRequest.setEndDate(dto.getEndDate());
+        if (dto.getEstimatedDuration() != null)
+            projectRequest.setEstimatedDuration(dto.getEstimatedDuration());
+        if (dto.getDetailedTasks() != null)
+            projectRequest.setDetailedTasks(dto.getDetailedTasks());
+        if (dto.getRequiredSkills() != null)
+            projectRequest.setRequiredSkills(dto.getRequiredSkills());
+        if (dto.getBudget() != null)
+            projectRequest.setBudget(dto.getBudget());
+        if (dto.getPaymentMethod() != null)
+            projectRequest.setPaymentMethod(dto.getPaymentMethod());
+        if (dto.getWorkLocation() != null)
+            projectRequest.setWorkLocation(dto.getWorkLocation());
+        if (dto.getWorkSchedule() != null)
+            projectRequest.setWorkSchedule(dto.getWorkSchedule());
+        if (dto.getPreferredMajor() != null)
+            projectRequest.setPreferredMajor(dto.getPreferredMajor());
+        if (dto.getMinGrade() != null)
+            projectRequest.setMinGrade(dto.getMinGrade());
+        if (dto.getRequiredExperience() != null)
+            projectRequest.setRequiredExperience(dto.getRequiredExperience());
+        if (dto.getAdditionalNotes() != null)
+            projectRequest.setAdditionalNotes(dto.getAdditionalNotes());
 
-        return projectRequest.getId();
+        return projectRequest;
 
     }
 

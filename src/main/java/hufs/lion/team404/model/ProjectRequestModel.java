@@ -1,63 +1,67 @@
 package hufs.lion.team404.model;
 
+import hufs.lion.team404.domain.dto.request.ProjectRequestCreateRequestDto;
+import hufs.lion.team404.domain.dto.request.ProjectRequestUpdateRequestDto;
 import hufs.lion.team404.domain.entity.*;
 import hufs.lion.team404.exception.StoreNotFoundException;
-import hufs.lion.team404.exception.StudentNotFoundException;
 import hufs.lion.team404.service.*;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ProjectRequestModel {
     private final ProjectRequestService projectRequestService;
     private final UserService userService;
+    private final StoreService storeService;
 
-
-    public Long createProjectRequest(String title, String projectOverview, LocalDate startDate, LocalDate endDate, Integer estimatedDuration, String detailedTasks, String requiredSkills, Integer budget, String paymentMethod, String workLocation, String workSchedule, String preferredMajor, Integer minGrade, String requiredExperience, String additionalNotes, Long id) {
-        User user = userService.findById(id)
+    public Long createProjectRequest(ProjectRequestCreateRequestDto dto, String email) {
+        User user = userService.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
+        Store store = storeService.findById(dto.getStoreId())
+               .orElseThrow(() -> new StoreNotFoundException("Store not found: " + dto.getStoreId()));
 
-        Store store = user.getStore();
-        if (store == null) {
-            throw new StoreNotFoundException(user.getId()+"에 해당하는 상점이 없습니다.");
+        if (!store.getUser().getId().equals(user.getId())) {
+                throw new IllegalArgumentException("본인 소유의 상점만 선택할 수 있습니다.");
+        } else {
+            store = user.getStore();
+            if (store == null) {
+                throw new StoreNotFoundException("해당 유저(" + user.getId() + ")에 등록된 상점이 없습니다.");
+            }
         }
 
+        LocalDate startDate = dto.getStartDate();
+        LocalDate endDate   = dto.getEndDate();
         if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("마감일은 시작일보다 빠를 수 없습니다.");
         }
 
         ProjectRequest projectRequest = ProjectRequest.builder()
                 .store(store)
-                .title(title)
-                .projectOverview(projectOverview)
+                .title(dto.getTitle())
+                .projectOverview(dto.getProjectOverview())
                 .startDate(startDate)
                 .endDate(endDate)
-                .estimatedDuration(estimatedDuration)
-                .detailedTasks(detailedTasks)
-                .requiredSkills(requiredSkills)
-                .budget(budget)
-                .paymentMethod(paymentMethod)
-                .workLocation(workLocation)
-                .workSchedule(workSchedule)
-                .preferredMajor(preferredMajor)
-                .minGrade(minGrade)
-                .requiredExperience(requiredExperience)
-                .additionalNotes(additionalNotes)
+                .estimatedDuration(dto.getEstimatedDuration())
+                .detailedTasks(dto.getDetailedTasks())
+                .requiredSkills(dto.getRequiredSkills())
+                .budget(dto.getBudget())
+                .paymentMethod(dto.getPaymentMethod())
+                .workLocation(dto.getWorkLocation())
+                .workSchedule(dto.getWorkSchedule())
+                .preferredMajor(dto.getPreferredMajor())
+                .minGrade(dto.getMinGrade())
+                .requiredExperience(dto.getRequiredExperience())
+                .additionalNotes(dto.getAdditionalNotes())
                 .status(ProjectRequest.Status.ACTIVE)
                 .build();
 
-        ProjectRequest save = projectRequestService.save(projectRequest);
-        return save.getId();
+        return projectRequestService.save(projectRequest).getId();
     }
 
     // 의뢰서 조회
@@ -70,15 +74,10 @@ public class ProjectRequestModel {
 
     // 의뢰서 수정
     @Transactional
-    public Long updateProjectRequest(Long projectRequestId, String title, String projectOverview, LocalDate startDate, LocalDate endDate, Integer estimatedDuration, String detailedTasks, String requiredSkills, Integer budget, String paymentMethod,
-                                     String workLocation, String workSchedule, String preferredMajor, Integer minGrade, String requiredExperience, String additionalNotes, Long userId) {
+    public ProjectRequest update(Long projectRequestId, ProjectRequestUpdateRequestDto dto, Long userId) {
 
-        return projectRequestService.update(
-                projectRequestId, userId,
-                title, projectOverview, startDate, endDate, estimatedDuration,
-                detailedTasks, requiredSkills, budget, paymentMethod,
-                workLocation, workSchedule, preferredMajor, minGrade,
-                requiredExperience, additionalNotes);
+        ProjectRequest updated = projectRequestService.update(projectRequestId, dto, userId);
+        return updated;
     }
 
     // 의뢰서 삭제

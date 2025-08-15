@@ -48,6 +48,12 @@ public class Student {
 
 	private String phoneCall;
 
+	private Boolean isPublic; // 학생 정보 조회 공개/비공개
+
+	private Boolean isEmployment; // 구직 중 / 휴식 중
+
+	private String region; // 지역
+
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
@@ -65,7 +71,7 @@ public class Student {
 	@Builder
 	public Student(User user, String introduction, Boolean isAuthenticated, String career, String birth,
 		String school,
-		String phoneCall) {
+		String phoneCall, Boolean isPublic, Boolean isEmployment, String region) {
 		this.user = user;
 		this.introduction = introduction;
 		this.isAuthenticated = isAuthenticated;
@@ -73,5 +79,8 @@ public class Student {
 		this.birth = birth;
 		this.school = school;
 		this.phoneCall = phoneCall;
+		this.isPublic = isPublic;
+		this.isEmployment = isEmployment;
+		this.region = region;
 	}
 }

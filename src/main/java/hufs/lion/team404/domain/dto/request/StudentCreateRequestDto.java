@@ -13,4 +13,7 @@ public class StudentCreateRequestDto {
 	private String university;
 	private String introduction;
 	private String career;
+	private Boolean isPublic;
+	private Boolean isEmployment;
+	private String region;
 }
