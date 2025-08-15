@@ -72,6 +72,12 @@ public class ProjectRequestService {
             throw new IllegalArgumentException("본인의 의뢰서만 수정할 수 있습니다.");
         }
 
+        LocalDate newStartDate = dto.getStartDate() != null ? dto.getStartDate() : projectRequest.getStartDate();
+        LocalDate newEndDate   = dto.getEndDate()   != null ? dto.getEndDate()   : projectRequest.getEndDate();
+        if (newStartDate != null && newEndDate != null && newEndDate.isBefore(newStartDate)) {
+            throw new IllegalArgumentException("마감일은 시작일보다 빠를 수 없습니다.");
+        }
+
         if (dto.getTitle() != null && !dto.getTitle().isBlank())
             projectRequest.setTitle(dto.getTitle());
         if (dto.getProjectOverview() != null)

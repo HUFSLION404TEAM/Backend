@@ -28,11 +28,6 @@ public class ProjectRequestModel {
 
         if (!store.getUser().getId().equals(user.getId())) {
                 throw new IllegalArgumentException("본인 소유의 상점만 선택할 수 있습니다.");
-        } else {
-            store = user.getStore();
-            if (store == null) {
-                throw new StoreNotFoundException("해당 유저(" + user.getId() + ")에 등록된 상점이 없습니다.");
-            }
         }
 
         LocalDate startDate = dto.getStartDate();

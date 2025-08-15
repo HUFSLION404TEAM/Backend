@@ -9,7 +9,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "project_requests")
@@ -90,7 +92,7 @@ public class ProjectRequest {
                           String preferredMajor, Integer minGrade, String requiredExperience,
                           String additionalNotes, ProjectRequest.Status status, List<Matching> matchings) {
 
-        this.store = store;
+        this.store = Objects.requireNonNull(store, "store must not be null");
         this.title = title;
         this.projectOverview = projectOverview;
         this.startDate = startDate;
@@ -106,8 +108,8 @@ public class ProjectRequest {
         this.minGrade = minGrade;
         this.requiredExperience = requiredExperience;
         this.additionalNotes = additionalNotes;
-        this.status = status;
-        this.matchings = matchings;
+        this.status = status != null ? status : Status.ACTIVE;
+        this.matchings = matchings != null ? matchings : new ArrayList<>();
 
     }
 }
