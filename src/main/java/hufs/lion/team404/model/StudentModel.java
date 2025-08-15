@@ -3,13 +3,12 @@ package hufs.lion.team404.model;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
-import hufs.lion.team404.domain.dto.request.StoreCreateRequestDto;
 import hufs.lion.team404.domain.dto.request.StudentCreateRequestDto;
-import hufs.lion.team404.domain.entity.Store;
 import hufs.lion.team404.domain.entity.Student;
 import hufs.lion.team404.domain.entity.User;
+import hufs.lion.team404.domain.enums.ErrorCode;
 import hufs.lion.team404.domain.enums.UserRole;
-import hufs.lion.team404.repository.StudentRepository;
+import hufs.lion.team404.exception.CustomException;
 import hufs.lion.team404.service.StudentService;
 import hufs.lion.team404.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +21,10 @@ public class StudentModel {
 
 	public void createStudent(StudentCreateRequestDto studentCreateRequestDto, Long user_id) {
 		User user = userService.findById(user_id).orElseThrow(() -> new NotFoundException("User not found"));
+
+		if (user.getStudent() != null) {
+			throw new CustomException(ErrorCode.STUDENT_USER_ALREADY_HAVE);
+		}
 
 		Student student = Student.builder()
 			.birth(studentCreateRequestDto.getBirth())

@@ -1,9 +1,9 @@
 package hufs.lion.team404.domain.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -56,6 +56,7 @@ public class Student {
 
 	// 연관관계
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Portfolio> portfolios;
 
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL)

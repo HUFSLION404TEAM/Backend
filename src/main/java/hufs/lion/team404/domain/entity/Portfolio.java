@@ -1,50 +1,75 @@
 package hufs.lion.team404.domain.entity;
 
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "portfolios")
+@Table(name = "portfolio")
 @Data
 @NoArgsConstructor
 public class Portfolio {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
-    
-    @Column(nullable = false)
-    private String title;
-    
-    @Column(columnDefinition = "TEXT")
-    private String representSentence;
-    
-    @Column(columnDefinition = "TEXT")
-    private String career;
-    
-    @Column(nullable = false)
-    private Boolean isPublic = true;
-    
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-    
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-    
-    // 연관관계
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
-    private List<PortfolioProject> portfolioProjects;
-    
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
-    private List<Matching> matchings;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@ManyToOne
+	@JoinColumn(name = "student_id", nullable = false)
+	private Student student;
+
+	@Column(nullable = false)
+	private String title;
+
+	private String progressPeriod;
+	private boolean prize;
+	private String workDoneProgress;
+	private String result;
+	private String felt;
+	private boolean isPrivate;
+
+	@CreationTimestamp
+	private LocalDateTime createdAt;
+
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
+
+	@OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+	private List<Matching> matchings;
+
+	@OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PortfolioImage> images = new ArrayList<>();
+
+	@Builder
+	public Portfolio(Student student, String title, String progressPeriod, boolean prize, String workDoneProgress, String result, String felt, boolean isPrivate,
+					 LocalDateTime createdAt, LocalDateTime updatedAt) {
+
+		this.student = student;
+		this.title = title;
+		this.progressPeriod = progressPeriod;
+		this.prize = prize;
+		this.workDoneProgress = workDoneProgress;
+		this.result = result;
+		this.felt = felt;
+		this.isPrivate = isPrivate;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+	}
 }
