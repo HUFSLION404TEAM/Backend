@@ -18,6 +18,7 @@ public class ProjectRequestModel {
     private final ProjectRequestService projectRequestService;
     private final UserService userService;
     private final StoreService storeService;
+    private final MatchingService matchingService;
 
     public Long createProjectRequest(ProjectRequestCreateRequestDto dto, String email) {
         User user = userService.findByEmail(email)
@@ -56,7 +57,18 @@ public class ProjectRequestModel {
                 .status(ProjectRequest.Status.ACTIVE)
                 .build();
 
-        return projectRequestService.save(projectRequest).getId();
+        ProjectRequest savedProjectRequest = projectRequestService.save(projectRequest);
+        
+        // ProjectRequest 생성 시 Matching도 함께 생성
+        Matching matching = new Matching();
+        matching.setProjectRequest(savedProjectRequest);
+        matching.setMatchedBy(Matching.MatchedBy.STORE_OFFER); // 가게에서 의뢰한 경우
+        matching.setStatus(Matching.Status.PENDING);
+        matching.setOfferedAt(java.time.LocalDateTime.now());
+        
+        matchingService.save(matching);
+
+        return savedProjectRequest.getId();
     }
 
     // 의뢰서 조회

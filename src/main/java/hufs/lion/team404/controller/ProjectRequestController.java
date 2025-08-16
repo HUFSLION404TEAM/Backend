@@ -27,7 +27,6 @@ import java.time.LocalDate;
 public class ProjectRequestController {
     private final ProjectRequestModel projectRequestModel;
 
-    // 생성
     @PostMapping("/")
     @Operation(
             summary = "의뢰서 생성",

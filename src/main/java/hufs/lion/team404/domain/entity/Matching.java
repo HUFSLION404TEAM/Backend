@@ -74,4 +74,18 @@ public class Matching {
     public enum Status {
         PENDING, ACCEPTED, REJECTED, COMPLETED, CANCELLED
     }
+    
+    public void accept() {
+        this.status = Status.ACCEPTED;
+        this.respondedAt = LocalDateTime.now();
+    }
+    
+    public void reject() {
+        this.status = Status.REJECTED;
+        this.respondedAt = LocalDateTime.now();
+    }
+    
+    public boolean isPending() {
+        return this.status == Status.PENDING;
+    }
 }
