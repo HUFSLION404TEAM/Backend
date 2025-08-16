@@ -1,7 +1,6 @@
 package hufs.lion.team404.service;
-
-import hufs.lion.team404.domain.dto.request.ApplicationSaveRequest;
-import hufs.lion.team404.domain.dto.request.ApplicationStartRequest;
+import hufs.lion.team404.domain.dto.request.ApplicationSaveRequestDto;
+import hufs.lion.team404.domain.dto.request.ApplicationStartRequestDto;
 import hufs.lion.team404.domain.dto.response.ApplicationResponse;
 import hufs.lion.team404.domain.entity.Application;
 import hufs.lion.team404.repository.ApplicationRepository;
@@ -10,10 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -21,34 +18,31 @@ import java.util.Map;
 public class ApplicationService {
 
 	private final ApplicationRepository repo;
+
 	@Transactional
-	public ApplicationResponse start(Long studentId, ApplicationStartRequest req) {
+	public ApplicationResponse start(Long studentId, ApplicationStartRequestDto req) {
 		var existingDraft = repo.findTopByStudentIdAndStoreIdAndStatusOrderByIdDesc(
 			studentId, req.getStoreId(), Application.Status.DRAFT
 		);
 		if (existingDraft.isPresent()) {
 			return ApplicationResponse.from(existingDraft.get());
 		}
-		Application created = Application.builder()
+
+		Application a = Application.builder()
 			.studentId(studentId)
 			.storeId(req.getStoreId())
-			.title(req.getTitle())
 			.status(Application.Status.DRAFT)
+			.title(req.getTitle())
 			.build();
 
-		Map<String, String> a = req.getAnswers();
-		if (a != null && !a.isEmpty()) {
-			if (created.getAnswers() == null) {
-				created.setAnswers(new HashMap<>());
-			}
-			created.getAnswers().putAll(a);
-		}
+		copyFromStartDto(a, req);
 
-		Application saved = repo.save(created);
-		return ApplicationResponse.from(saved);
+		return ApplicationResponse.from(repo.save(a));
 	}
+
+
 	@Transactional
-	public ApplicationResponse saveDraft(Long studentId, Long applicationId, ApplicationSaveRequest req) {
+	public ApplicationResponse saveDraft(Long studentId, Long applicationId, ApplicationSaveRequestDto req) {
 		Application a = repo.findByIdAndStudentId(applicationId, studentId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다."));
 
@@ -56,15 +50,19 @@ public class ApplicationService {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "제출되었거나 삭제된 지원서는 수정할 수 없습니다.");
 		}
 
-		if (req.getTitle() != null) a.setTitle(req.getTitle());
-
-		if (req.getAnswers() != null && !req.getAnswers().isEmpty()) {
-			if (a.getAnswers() == null) a.setAnswers(new HashMap<>());
-			a.getAnswers().putAll(req.getAnswers());
-		}
+		applyNonNull(a::setTitle,           req.getTitle());
+		applyNonNull(a::setProjectName,     req.getProjectName());
+		applyNonNull(a::setOutline,         req.getOutline());
+		applyNonNull(a::setResolveProblem,  req.getResolveProblem());
+		applyNonNull(a::setNecessity,       req.getNecessity());
+		applyNonNull(a::setJobDescription,  req.getJobDescription());
+		applyNonNull(a::setResult,          req.getResult());
+		applyNonNull(a::setRequirements,    req.getRequirements());
+		applyNonNull(a::setExpectedOutcome, req.getExpectedOutcome());
 
 		return ApplicationResponse.from(a);
 	}
+
 	@Transactional
 	public ApplicationResponse submit(Long studentId, Long applicationId) {
 		Application a = repo.findByIdAndStudentId(applicationId, studentId)
@@ -74,17 +72,21 @@ public class ApplicationService {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 제출되었거나 삭제된 지원서입니다.");
 		}
 
-		Map<String, String> m = a.getAnswers();
-		require(m, "personal.name");
-		require(m, "personal.university");
-		require(m, "personal.major");
-		require(m, "personal.phone");
-		require(m, "personal.email");
+		require(a.getTitle(),           "title");
+		require(a.getProjectName(),     "projectName");
+		require(a.getOutline(),         "outline");
+		require(a.getResolveProblem(),  "resolveProblem");
+		require(a.getNecessity(),       "necessity");
+		require(a.getJobDescription(),  "jobDescription");
+		require(a.getResult(),          "result");
+		require(a.getRequirements(),    "requirements");
+		require(a.getExpectedOutcome(), "expectedOutcome");
 
 		a.setStatus(Application.Status.SUBMITTED);
 		a.setSubmittedAt(LocalDateTime.now());
 		return ApplicationResponse.from(a);
 	}
+
 	@Transactional
 	public void deleteDraft(Long studentId, Long applicationId) {
 		Application a = repo.findByIdAndStudentId(applicationId, studentId)
@@ -98,10 +100,24 @@ public class ApplicationService {
 		a.setDeletedAt(LocalDateTime.now());
 	}
 
-	private static void require(Map<String, String> m, String key) {
-		if (m == null || !m.containsKey(key) || m.get(key) == null || m.get(key).isBlank()) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "필수 항목 누락: " + key);
+
+	private static void require(String v, String field) {
+		if (v == null || v.isBlank()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "필수 항목 누락: " + field);
 		}
+	}
+	private static <T> void applyNonNull(Consumer<T> setter, T value) {
+		if (value != null) setter.accept(value);
+	}
+	private static void copyFromStartDto(Application a, ApplicationStartRequestDto req) {
+		applyNonNull(a::setProjectName,     req.getProjectName());
+		applyNonNull(a::setOutline,         req.getOutline());
+		applyNonNull(a::setResolveProblem,  req.getResolveProblem());
+		applyNonNull(a::setNecessity,       req.getNecessity());
+		applyNonNull(a::setJobDescription,  req.getJobDescription());
+		applyNonNull(a::setResult,          req.getResult());
+		applyNonNull(a::setRequirements,    req.getRequirements());
+		applyNonNull(a::setExpectedOutcome, req.getExpectedOutcome());
 	}
 }
 

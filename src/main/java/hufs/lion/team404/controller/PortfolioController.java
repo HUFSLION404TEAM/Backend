@@ -59,29 +59,29 @@ public class PortfolioController {
 		return ApiResponse.success(portfolio_id);
 	}
 
-	@GetMapping("/")
-	@Operation(
-		summary = "전체 포트폴리오 조회",
-		description = "전체 포트폴리오를 조회합니다."
-	)
-	public ApiResponse<List<Portfolio>> getAllPortfolios() {
-
-		List<Portfolio> portfolios = portfolioModel.getAllPortfolios();
-
-		return ApiResponse.success("포트폴리오가 성공적으로 조회되었습니다.", portfolios);
-	}
-
-	@GetMapping("/{portfolioId}")
-	@Operation(
-		summary = "포트폴리오 상세 조회",
-		description = "포트폴리오를 조회합니다."
-	)
-	public ApiResponse<Portfolio> getPortfolioById(@PathVariable Long portfolioId) {
-		// 상세 조회 만들어야함
-		Portfolio portfolio = portfolioModel.getPortfolioById(portfolioId);
-
-		return ApiResponse.success("포트폴리오가 성공적으로 조회되었습니다.", portfolio);
-	}
+	// @GetMapping("/")
+	// @Operation(
+	// 	summary = "전체 포트폴리오 조회",
+	// 	description = "전체 포트폴리오를 조회합니다."
+	// )
+	// public ApiResponse<List<Portfolio>> getAllPortfolios() {
+	//
+	// 	List<Portfolio> portfolios = portfolioModel.getAllPortfolios();
+	//
+	// 	return ApiResponse.success("포트폴리오가 성공적으로 조회되었습니다.", portfolios);
+	// }
+	//
+	// @GetMapping("/{portfolioId}")
+	// @Operation(
+	// 	summary = "포트폴리오 상세 조회",
+	// 	description = "포트폴리오를 조회합니다."
+	// )
+	// public ApiResponse<Portfolio> getPortfolioById(@PathVariable Long portfolioId) {
+	// 	// 상세 조회 만들어야함
+	// 	Portfolio portfolio = portfolioModel.getPortfolioById(portfolioId);
+	//
+	// 	return ApiResponse.success("포트폴리오가 성공적으로 조회되었습니다.", portfolio);
+	// }
 
 	@PutMapping(value = "/{portfolioId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(

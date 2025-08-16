@@ -1,7 +1,7 @@
 package hufs.lion.team404.controller;
-import hufs.lion.team404.domain.dto.request.ApplicationSaveRequest;
+import hufs.lion.team404.domain.dto.request.ApplicationSaveRequestDto;
 import hufs.lion.team404.service.ApplicationService;
-import hufs.lion.team404.domain.dto.request.ApplicationStartRequest;
+import hufs.lion.team404.domain.dto.request.ApplicationStartRequestDto;
 import hufs.lion.team404.domain.dto.response.ApplicationResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +19,7 @@ public class ApplicationController {
 	@Operation(summary = "지원서 생성", description = "특정 가게에 대한 지원서를 DRAFT 상태로 생성합니다.")
 	@PostMapping("/start")
 	public ApplicationResponse start(@RequestParam Long studentId,
-		@Valid @RequestBody ApplicationStartRequest req) {
+		@Valid @RequestBody ApplicationStartRequestDto req) {
 		return applicationService.start(studentId, req);
 	}
 	@Operation(summary = "지원서 저장(수정)", description = "상태의 지원서를 부분 수정합니다.")
@@ -27,7 +27,7 @@ public class ApplicationController {
 	public ResponseEntity<ApplicationResponse> save(
 		@RequestParam Long studentId,
 		@PathVariable Long applicationId,
-		@RequestBody ApplicationSaveRequest req
+		@RequestBody ApplicationSaveRequestDto req
 	) {
 		return ResponseEntity.ok(applicationService.saveDraft(studentId, applicationId, req));
 	}
