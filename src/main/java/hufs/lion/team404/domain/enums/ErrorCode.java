@@ -39,7 +39,7 @@ public enum ErrorCode {
     STORE_USER_ALREADY_HAVE(HttpStatus.BAD_REQUEST, "STORE_002", "유저에 이미 업체가 등록되었습니다."),
     STORE_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "STORE_003", "인증되지 않은 업체입니다."),
 
-    // 매칭 에러
+
     MATCHING_NOT_FOUND(HttpStatus.NOT_FOUND, "MATCHING_001", "매칭을 찾을 수 없습니다."),
     MATCHING_ALREADY_EXISTS(HttpStatus.CONFLICT, "MATCHING_002", "이미 매칭이 존재합니다."),
     INVALID_MATCHING_STATUS(HttpStatus.BAD_REQUEST, "MATCHING_003", "잘못된 매칭 상태입니다."),
