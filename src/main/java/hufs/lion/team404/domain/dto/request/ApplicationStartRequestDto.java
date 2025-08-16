@@ -18,4 +18,6 @@ public class ApplicationStartRequestDto {
 	private String requirements;
 
 	private String expectedOutcome;
+
+
 }
