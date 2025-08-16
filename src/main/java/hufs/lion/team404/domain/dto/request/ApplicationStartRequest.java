@@ -8,6 +8,11 @@ import java.util.Map;
 public class ApplicationStartRequest {
 	@NotNull private Long storeId;
 	private String title;
-	private Map<String, String> answers;
+
+
+
+	private String name;
+	private String univercity;
+	private String department;
 }
 
