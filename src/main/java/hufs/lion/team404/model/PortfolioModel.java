@@ -81,16 +81,16 @@ public class PortfolioModel {
 		}
 		return portfolio.getId();
 	}
-
-	// 전체 포폴 조회
-	@Transactional(readOnly = true)
-	public List<Portfolio> getAllPortfolios() {
-		portfolioService.findAll().stream().map(portfolio -> {
-			return PortfolioResponse.builder()
-				.career(portfolio.get)
-		})
-		return portfolioService.findAll();
-	}
+//
+//	// 전체 포폴 조회
+//	@Transactional(readOnly = true)
+//	public List<Portfolio> getAllPortfolios() {
+//		portfolioService.findAll().stream().map(portfolio -> {
+//			return PortfolioResponse.builder()
+//				.career(portfolio.get)
+//		})
+//		return portfolioService.findAll();
+//	}
 
 	// 포트포리오 조회 (포폴 ID)
 	@Transactional(readOnly = true)
@@ -99,6 +99,8 @@ public class PortfolioModel {
 			.orElseThrow(() -> new IllegalArgumentException("포트폴리오를 찾을 수 없습니다."));
 	}
 
+
+	// 수정
 	@Transactional
 	public Long updatePortfolio(Long portfolioId, String title, String progressPeriod, Boolean prize,
 		String workDoneProgress, String result, String felt, Boolean isPrivate,

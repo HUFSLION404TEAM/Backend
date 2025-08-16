@@ -1,7 +1,11 @@
 package hufs.lion.team404.controller;
 
 import hufs.lion.team404.domain.dto.request.StudentCreateRequestDto;
+import hufs.lion.team404.domain.dto.request.StudentSearchRequestDto;
 import hufs.lion.team404.domain.dto.response.ApiResponse;
+import hufs.lion.team404.domain.dto.response.PageResponse;
+import hufs.lion.team404.domain.dto.response.StudentResponse;
+import hufs.lion.team404.domain.entity.Student;
 import hufs.lion.team404.model.StudentModel;
 import hufs.lion.team404.oauth.jwt.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +13,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,4 +43,20 @@ public class StudentController {
 		
 		return ApiResponse.success("학생 정보가 성공적으로 생성되었습니다.");
 	}
+
+	@PostMapping("/search")
+	@Operation(
+			summary = "학생 정보 조회",
+			description = "학생 정보를 조회합니다.",
+			security = @SecurityRequirement(name = "Bearer Authentication")
+	)
+	public ApiResponse<PageResponse<StudentResponse>> search(
+			@RequestBody StudentSearchRequestDto request,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size
+	) {
+		return studentModel.search(request, page, size);
+	}
+
+
 }
