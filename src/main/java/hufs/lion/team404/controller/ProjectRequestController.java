@@ -87,10 +87,11 @@ public class ProjectRequestController {
                     arraySchema = @Schema(description = "첨부파일 리스트"),
                     schema = @Schema(type = "string", format = "binary")
             )
-            List<MultipartFile> files
+            List<MultipartFile> files,
+            @RequestParam(name = "clearFiles", required = false, defaultValue = "false") boolean clearFiles
     ) {
         Long userId = user.getId();
-        projectRequestModel.update(projectRequestId, dto, userId, null, false);
+        projectRequestModel.update(projectRequestId, dto, userId, files, clearFiles);
         return ApiResponse.success("의뢰서를 수정했습니다.");
     }
 

@@ -35,11 +35,20 @@ public class ProjectRequestFileService {
         for (MultipartFile file : files) {
             if (file == null || file.isEmpty()) continue;
 
-            String saved = file.getOriginalFilename();
+            String originalName = file.getOriginalFilename();
+            String ext = "";
+            if (originalName != null) {
+                int dot = originalName.lastIndexOf('.');
+                if (dot != -1) {
+                    ext = originalName.substring(dot);
+                }
+            }
+            String saved = java.util.UUID.randomUUID().toString() + ext;
+
             ProjectRequestFile  projectRequestFile = ProjectRequestFile.builder()
                     .projectRequest(projectRequest)
-                    .filePath("/uploads/file/" + saved)
-                    .originalFileName(file.getOriginalFilename())
+                    .filePath("/uploads/project-request/" + saved)
+                    .originalFileName(originalName)
                     .savedFileName(saved)
                     .fileSize(file.getSize())
                     .contentType(file.getContentType())

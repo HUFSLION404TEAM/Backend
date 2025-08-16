@@ -82,7 +82,7 @@ public class ProjectRequest {
     private List<Matching> matchings;
 
     @OneToMany(mappedBy = "projectRequest", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id ASC")
+    @OrderBy("fileOrder ASC, id ASC")
     private List<ProjectRequestFile> files = new ArrayList<>();
 
     public enum Status {
