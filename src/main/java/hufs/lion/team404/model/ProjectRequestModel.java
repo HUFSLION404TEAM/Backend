@@ -73,10 +73,6 @@ public class ProjectRequestModel {
 
         matchingService.save(matching);
 
-        return savedProjectRequest.getId();
-
-        projectRequestService.save(projectRequest);
-
         // 첨부파일 추가 관련 로직
         projectRequestFileService.update(projectRequest, files);
 
