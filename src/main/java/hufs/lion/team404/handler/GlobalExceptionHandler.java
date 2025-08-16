@@ -15,7 +15,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -140,18 +139,5 @@ public class GlobalExceptionHandler {
                 ErrorCode.INTERNAL_SERVER_ERROR.getCode()
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
-    @ExceptionHandler(ResponseStatusException.class)
-    protected ResponseEntity<ApiResponse<Void>> handleResponseStatusException(
-        ResponseStatusException e, HttpServletRequest req) {
-
-        int status = e.getStatusCode().value();
-        String reason = e.getReason();
-
-        if (status >= 500) log.error("RSE: {} - {}", reason, req.getRequestURL(), e);
-        else               log.warn ("RSE: {} - {}", reason, req.getRequestURL());
-
-        return ResponseEntity.status(status)
-            .body(ApiResponse.failure(reason, "HTTP_" + status)); // 필요시 에러코드 매핑
     }
 }
