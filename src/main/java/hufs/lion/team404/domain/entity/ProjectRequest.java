@@ -18,7 +18,7 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 public class ProjectRequest {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -80,7 +80,11 @@ public class ProjectRequest {
     // 연관관계
     @OneToMany(mappedBy = "projectRequest", cascade = CascadeType.ALL)
     private List<Matching> matchings;
-    
+
+    @OneToMany(mappedBy = "projectRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
+    private List<ProjectRequestFile> files = new ArrayList<>();
+
     public enum Status {
         ACTIVE, CLOSED, MATCHED
     }
@@ -90,7 +94,7 @@ public class ProjectRequest {
                           String detailedTasks, String requiredSkills,
                           Integer budget, String paymentMethod, String workLocation, String workSchedule,
                           String preferredMajor, Integer minGrade, String requiredExperience,
-                          String additionalNotes, ProjectRequest.Status status, List<Matching> matchings) {
+                          String additionalNotes, ProjectRequest.Status status, List<Matching> matchings, List<ProjectRequestFile> files) {
 
         this.store = Objects.requireNonNull(store, "store must not be null");
         this.title = title;
@@ -110,6 +114,7 @@ public class ProjectRequest {
         this.additionalNotes = additionalNotes;
         this.status = status != null ? status : Status.ACTIVE;
         this.matchings = matchings != null ? matchings : new ArrayList<>();
+        this.files = files != null ? files : new ArrayList<>();
 
     }
 }
