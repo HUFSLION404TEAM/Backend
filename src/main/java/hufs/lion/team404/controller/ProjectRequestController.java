@@ -35,7 +35,7 @@ public class ProjectRequestController {
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(
             summary = "의뢰서 생성",
-            description = "의뢰서를 생성합니다.",
+            description = "새로운 의뢰서를 생성합니다.",
             security = @SecurityRequirement(name = "Bearer Authentication")
     )
     public ApiResponse<?> createProjectRequest(
@@ -57,9 +57,15 @@ public class ProjectRequestController {
 
     // 조회
     @GetMapping("/{projectRequestId}")
-    @Operation(summary = "의뢰서 조회", security = @SecurityRequirement(name = "Bearer Authentication"))
+    @Operation(
+            summary = "의뢰서 조회",
+            description = "의뢰서를 조회합니다.",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
     public ApiResponse<ProjectRequest> getProjectRequest(@PathVariable Long projectRequestId) {
+
         ProjectRequest projectRequest = projectRequestModel.getProjectRequest(projectRequestId);
+
         return ApiResponse.success("의뢰서가 성공적으로 조회되었습니다.", projectRequest);
     }
 
@@ -88,16 +94,20 @@ public class ProjectRequestController {
         return ApiResponse.success("의뢰서를 수정했습니다.");
     }
 
-
     // 삭제
-
     @DeleteMapping("/{projectRequestId}")
-    @Operation(summary = "의뢰서 삭제", security = @SecurityRequirement(name = "Bearer Authentication"))
-    public ApiResponse<Void> deleteProjectRequest(
-            @PathVariable Long projectRequestId,
-            @AuthenticationPrincipal UserPrincipal user
-    ) {
-        projectRequestModel.deleteProjectRequest(projectRequestId, user.getId());
-        return ApiResponse.success("의뢰서가 삭제되었습니다.");
+    @Operation(
+            summary = "의뢰서 삭제",
+            description = "의뢰서를 삭제합니다.",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
+    public ApiResponse<?> deleteProjectRequest (
+            @PathVariable("projectRequestId") Long projectRequestId,
+            @AuthenticationPrincipal UserPrincipal authentication) {
+
+        Long id = authentication.getId();
+        projectRequestModel.deleteProjectRequest(projectRequestId, id);
+
+        return ApiResponse.success("포트폴리오가 삭제되었습니다.");
     }
 }
