@@ -1,5 +1,6 @@
 package hufs.lion.team404.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class Matching {
     private Long id;
     
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "project_request_id", nullable = false)
     private ProjectRequest projectRequest;
     
