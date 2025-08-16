@@ -9,14 +9,14 @@ import java.util.Optional;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
-
+    
     Optional<Store> findByUserId(Long userId);
-
+    
     Optional<Store> findByBusinessNumber(String businessNumber);
-
+    
     List<Store> findByCategory(String category);
-
+    
     List<Store> findByStoreNameContaining(String storeName);
-
+    
     boolean existsByBusinessNumber(String businessNumber);
 }
