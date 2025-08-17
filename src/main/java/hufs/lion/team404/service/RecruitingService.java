@@ -6,6 +6,8 @@ import hufs.lion.team404.domain.entity.Recruiting;
 import hufs.lion.team404.repository.RecruitingRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class RecruitingService {
@@ -14,4 +16,7 @@ public class RecruitingService {
 	public void save(Recruiting recruiting) {
 		recruitingRepository.save(recruiting);
 	}
+
+	public Optional<Recruiting> findById(Long id) { return recruitingRepository.findById(id); }
+
 }

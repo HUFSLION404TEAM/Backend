@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import hufs.lion.team404.domain.entity.Recruiting;
@@ -70,6 +71,12 @@ public class RecruitingModel {
 			}
 		}
 		return recruiting.getId();
+	}
+
+	@Transactional(readOnly = true)
+	public Recruiting getRecruitingById(Long id) {
+		return recruitingService.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("공고를 찾을 수 없습니다."));
 	}
 
 }

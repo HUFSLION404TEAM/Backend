@@ -2,14 +2,12 @@ package hufs.lion.team404.controller;
 
 import java.util.List;
 
+import hufs.lion.team404.domain.dto.response.RecruitingResponse;
+import hufs.lion.team404.domain.entity.Recruiting;
+import hufs.lion.team404.domain.entity.RecruitingImage;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import hufs.lion.team404.domain.dto.response.ApiResponse;
@@ -54,5 +52,37 @@ public class RecruitingController {
 
 		return ApiResponse.success(recruiting_id);
 	}
+
+
+	@GetMapping("/{recruitingId}")
+	@Operation(
+			summary = "구인글 조회",
+			description = "가게의 구인글을 조회해줍니다.",
+			security = @SecurityRequirement(name = "Bearer Authentication")
+	)
+	public ApiResponse<RecruitingResponse> getRecruitingById(@PathVariable Long recruitingId) {
+
+		Recruiting recruiting = recruitingModel.getRecruitingById(recruitingId);
+
+		RecruitingResponse dto = RecruitingResponse.builder()
+				.id(recruiting.getId())
+				.title(recruiting.getTitle())
+				.imagesUrl(
+						recruiting.getImages() == null ? List.of()
+								: recruiting.getImages().stream()
+								.map(RecruitingImage::getImagePath)
+								.toList()
+				)
+				.recruitmentPeriod(recruiting.getRecruitmentPeriod())
+				.progressPeriod(recruiting.getProgressPeriod())
+				.price(recruiting.getPrice())
+				.projectOutline(recruiting.getProjectOutline())
+				.expectedResults(recruiting.getExpectedResults())
+				.detailRequirement(recruiting.getDetailRequirement())
+				.build();
+
+		return ApiResponse.success("공고가 성공적으로 조회되었습니다.", dto);
+	}
+
 
 }
