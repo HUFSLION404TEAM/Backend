@@ -26,18 +26,19 @@ public class StoreModel {
 	public void createStore(StoreCreateRequestDto storeCreateRequestDto, Long user_id) {
 		User user = userService.findById(user_id).orElseThrow(() -> new NotFoundException("User not found"));
 
-		if (user.getStore() != null) {
-			throw new CustomException(ErrorCode.STORE_USER_ALREADY_HAVE);
+		// 이미 같은 사업자번호로 등록된 업체가 있는지 확인
+		if (storeService.existsByBusinessNumber(storeCreateRequestDto.getBusinessNumber())) {
+			throw new CustomException(ErrorCode.STORE_USER_ALREADY_HAVE, "이미 등록된 사업자번호입니다.");
 		}
 
 		Store store = Store.builder()
+			.businessNumber(storeCreateRequestDto.getBusinessNumber())
+			.user(user)
 			.storeName(storeCreateRequestDto.getName())
 			.address(storeCreateRequestDto.getAddress())
 			.contact(storeCreateRequestDto.getPhone())
 			.category(storeCreateRequestDto.getType())
 			.introduction(storeCreateRequestDto.getIntroduction())
-			.businessNumber(storeCreateRequestDto.getBusinessNumber())
-			.user(user)
 			.build();
 
 		user.setUserRole(UserRole.STORE);
@@ -45,9 +46,9 @@ public class StoreModel {
 		storeService.save(store);
 	}
 
-	public StoreReadResponseDto getStoreById(Long storeId) {
-		Store store = storeService.findById(storeId)
-			.orElseThrow(() -> new NotFoundException("Store not found: id=" + storeId));
+	public StoreReadResponseDto getStoreByBusinessNumber(String businessNumber) {
+		Store store = storeService.findById(businessNumber)
+			.orElseThrow(() -> new NotFoundException("Store not found: businessNumber=" + businessNumber));
 
 		return StoreReadResponseDto.fromEntity(store);
 	}
@@ -58,12 +59,12 @@ public class StoreModel {
 			.toList();
 	}
 
-	public StoreReadResponseDto updateStore(Long storeId, StoreUpdateRequestDto dto, Long userId) {
-		Store updated = storeService.updateStore(storeId, dto, userId);
+	public StoreReadResponseDto updateStore(String businessNumber, StoreUpdateRequestDto dto, Long userId) {
+		Store updated = storeService.updateStore(businessNumber, dto, userId);
 		return StoreReadResponseDto.fromEntity(updated);
 	}
 
-	public void deleteStore(Long storeId, Long userId) {
-		storeService.deleteStore(storeId, userId);
+	public void deleteStore(String businessNumber, Long userId) {
+		storeService.deleteStore(businessNumber, userId);
 	}
 }

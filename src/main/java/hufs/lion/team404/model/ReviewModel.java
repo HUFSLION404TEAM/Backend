@@ -62,8 +62,12 @@ public class ReviewModel {
         // 리뷰어 타입 설정
         if (reviewer.getStudent() != null) {
             review.setReviewerType(Review.ReviewerType.STUDENT);
-        } else if (reviewer.getStore() != null) {
-            review.setReviewerType(Review.ReviewerType.STORE);
+        } else {
+            // 매칭에서 해당 스토어 확인
+            Store matchingStore = matching.getChatRoom().getStore();
+            if (matchingStore != null && matchingStore.getUser().getId().equals(reviewer.getId())) {
+                review.setReviewerType(Review.ReviewerType.STORE);
+            }
         }
         
         Review savedReview = reviewService.save(review);
@@ -75,10 +79,13 @@ public class ReviewModel {
                 // 학생의 온도 조정
                 reviewee.getStudent().adjustTemperature(request.getRating());
                 userService.save(reviewee);
-            } else if (reviewee.getStore() != null) {
-                // 가게의 온도 조정
-                reviewee.getStore().adjustTemperature(request.getRating());
-                userService.save(reviewee);
+            } else {
+                // 해당 매칭의 스토어 찾아서 온도 조정
+                Store matchingStore = matching.getChatRoom().getStore();
+                if (matchingStore != null) {
+                    matchingStore.adjustTemperature(request.getRating());
+                    userService.save(reviewee);
+                }
             }
         }
         

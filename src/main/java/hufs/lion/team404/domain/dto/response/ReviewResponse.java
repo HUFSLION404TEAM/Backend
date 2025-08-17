@@ -1,6 +1,7 @@
 package hufs.lion.team404.domain.dto.response;
 
 import hufs.lion.team404.domain.entity.Review;
+import hufs.lion.team404.domain.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,10 +50,19 @@ public class ReviewResponse {
     
     public static ReviewResponse fromEntity(Review review) {
         Double revieweeTemperature = null;
-        if (review.getReviewee().getStudent() != null) {
-            revieweeTemperature = review.getReviewee().getStudent().getTemperature();
-        } else if (review.getReviewee().getStore() != null) {
-            revieweeTemperature = review.getReviewee().getStore().getTemperature();
+        User reviewee = review.getReviewee();
+        
+        if (reviewee != null) {
+            if (reviewee.getStudent() != null) {
+                // 리뷰 대상자가 학생인 경우
+                revieweeTemperature = reviewee.getStudent().getTemperature();
+            } else {
+                // 리뷰 대상자가 업체 소유자인 경우, 매칭에서 해당 업체를 찾아야 함
+                if (review.getMatching() != null && review.getMatching().getChatRoom() != null) {
+                    // 매칭의 채팅방에서 해당 Store 가져오기
+                    revieweeTemperature = review.getMatching().getChatRoom().getStore().getTemperature();
+                }
+            }
         }
         
         return new ReviewResponse(
@@ -60,8 +70,8 @@ public class ReviewResponse {
                 review.getMatching().getId(),
                 review.getReviewer().getId(),
                 review.getReviewer().getName(),
-                review.getReviewee().getId(),
-                review.getReviewee().getName(),
+                reviewee != null ? reviewee.getId() : null,
+                reviewee != null ? reviewee.getName() : "알 수 없음",
                 revieweeTemperature,
                 review.getReviewerType(),
                 review.getRating(),

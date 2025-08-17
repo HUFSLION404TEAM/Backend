@@ -57,9 +57,9 @@ public class User {
 	@JsonIgnore
 	private Student student;
 
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	@JsonIgnore
-	private Store store;
+	private List<Store> stores;
 
 	@OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
 	@JsonIgnore
@@ -95,7 +95,7 @@ public class User {
 
 	@Builder
 	public User(String name, String email, String profileImage, String socialProvider, String socialId,
-		LocalDateTime createdAt, LocalDateTime updatedAt, Student student, Store store,
+		LocalDateTime createdAt, LocalDateTime updatedAt, Student student, List<Store> stores,
 		List<ChatMessage> sentMessages, List<Review> writtenReviews,
 		List<Report> reportsMade, List<Notification> notifications,
 		List<Favorite> favorites, List<Payment> payments, List<Payment> receivedPayments, UserRole userRole) {
@@ -107,7 +107,7 @@ public class User {
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.student = student;
-		this.store = store;
+		this.stores = stores;
 		this.sentMessages = sentMessages;
 		this.writtenReviews = writtenReviews;
 		this.reportsMade = reportsMade;

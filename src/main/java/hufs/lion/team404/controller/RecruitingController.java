@@ -42,6 +42,7 @@ public class RecruitingController {
 	)
 	public ApiResponse<?> createRecruiting(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
+		@RequestParam(value = "businessNumber") String businessNumber,
 		@RequestParam(value = "title") String title,
 		@RequestParam(value = "recruitmentPeriod") String recruitmentPeriod,
 		@RequestParam(value = "progressPeriod") String progressPeriod,
@@ -52,7 +53,7 @@ public class RecruitingController {
 		@RequestPart(value = "images", required = false) List<MultipartFile> images
 	) {
 		Long userId = userPrincipal.getId();
-		Long recruiting_id = recruitingModel.createRecruiting(userId, title, recruitmentPeriod, progressPeriod, price,
+		Long recruiting_id = recruitingModel.createRecruiting(userId, businessNumber, title, recruitmentPeriod, progressPeriod, price,
 			projectOutline,
 			expectedResults, detailRequirement, images);
 

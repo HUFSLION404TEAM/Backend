@@ -18,7 +18,7 @@ public class MatchingResponse {
 	private LocalDateTime createdAt;
 
 	// 가게 정보
-	private Long storeId;
+	private String businessNumber;
 	private String storeName;
 	private String storeEmail;
 
@@ -39,7 +39,7 @@ public class MatchingResponse {
 			.createdAt(matching.getCreatedAt())
 
 			// 가게 정보
-			.storeId(matching.getProjectRequest().getStore().getId())
+			.businessNumber(matching.getProjectRequest().getStore().getBusinessNumber())
 			.storeName(matching.getProjectRequest().getStore().getStoreName())
 			.storeEmail(matching.getProjectRequest().getStore().getUser().getEmail())
 

@@ -62,8 +62,12 @@ public class ReportModel {
         // 신고자 타입 설정
         if (reporter.getStudent() != null) {
             report.setReporterType(Report.ReporterType.STUDENT);
-        } else if (reporter.getStore() != null) {
-            report.setReporterType(Report.ReporterType.STORE);
+        } else {
+            // 매칭에서 해당 스토어 확인
+            Store matchingStore = matching.getChatRoom().getStore();
+            if (matchingStore != null && matchingStore.getUser().getId().equals(reporter.getId())) {
+                report.setReporterType(Report.ReporterType.STORE);
+            }
         }
         
         Report savedReport = reportService.save(report);

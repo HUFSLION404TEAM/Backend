@@ -29,14 +29,21 @@ public class RecruitingModel {
 	private final FileStorageUtil fileStorageUtil;
 	private final RecruitingImageService recruitingImageService;
 
-	public Long createRecruiting(Long id, String title, String recruitmentPeriod, String progressPeriod, String price,
+	public Long createRecruiting(Long userId, String businessNumber, String title, String recruitmentPeriod, String progressPeriod, String price,
 		String projectOutline, String expectedResults, String detailRequirement, List<MultipartFile> images) {
 
 		if (images.size() > 3) {
 			throw new CustomException(ErrorCode.IMAGE_COUNT_EXCEEDED);
 		}
 
-		Store store = storeService.findByUserId(id).orElseThrow(() -> new UserNotFoundException(id));
+		// 사업자번호로 Store 조회
+		Store store = storeService.findByBusinessNumber(businessNumber)
+			.orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND, "업체를 찾을 수 없습니다."));
+
+		// 해당 Store의 소유자가 현재 사용자인지 확인
+		if (!store.getUser().getId().equals(userId)) {
+			throw new CustomException(ErrorCode.ACCESS_DENIED, "해당 업체의 소유자가 아닙니다.");
+		}
 
 		Recruiting recruiting = Recruiting.builder()
 			.title(title)

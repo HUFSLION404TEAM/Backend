@@ -39,12 +39,19 @@ public class ProjectRequestModel {
 
 	@Transactional
 	public Long createProjectRequest(ProjectRequestCreateRequestDto dto, Long id, List<MultipartFile> files) {
-		Store store = storeService.findByUserId(id)
-			.orElseThrow(() -> new StoreNotFoundException("Store not found: " + id));
+		// 사용자 정보를 먼저 가져온 후, 사용자의 스토어 목록에서 해당 스토어 찾기
+		User user = userService.findById(id)
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 		// 채팅방 정보 가져오기 (이미 존재하는 채팅방)
 		ChatRoom chatRoom = chatRoomService.findById(dto.getChatRoomId())
 			.orElseThrow(() -> new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND, "채팅방을 찾을 수 없습니다."));
+
+		// 채팅방의 스토어가 현재 사용자의 스토어인지 확인
+		Store chatRoomStore = chatRoom.getStore();
+		if (!chatRoomStore.getUser().getId().equals(user.getId())) {
+			throw new CustomException(ErrorCode.ACCESS_DENIED, "해당 채팅방의 스토어 소유자가 아닙니다.");
+		}
 
 		// 채팅방의 학생 정보 가져오기
 		Student student = chatRoom.getStudent();
@@ -56,7 +63,7 @@ public class ProjectRequestModel {
 		}
 
 		ProjectRequest projectRequest = ProjectRequest.builder()
-			.store(store)
+			.store(chatRoomStore)
 			.title(dto.getTitle())
 			.projectOverview(dto.getProjectOverview())
 			.startDate(startDate)
@@ -77,9 +84,10 @@ public class ProjectRequestModel {
 
 		ProjectRequest savedProjectRequest = projectRequestService.save(projectRequest);
 
-		// ProjectRequest 생성 시 Matching도 함께 생성
+		// ProjectRequest 생성 시 Matching도 함께 생성 (채팅방 연결)
 		Matching matching = new Matching();
 		matching.setProjectRequest(savedProjectRequest);
+		matching.setChatRoom(chatRoom); // 채팅방 연결
 		matching.setMatchedBy(Matching.MatchedBy.STORE_OFFER); // 가게에서 의뢰한 경우
 		matching.setStatus(Matching.Status.PENDING);
 		matching.setOfferedAt(java.time.LocalDateTime.now());
@@ -121,15 +129,12 @@ public class ProjectRequestModel {
 	public void deleteProjectRequest(Long projectRequestId, Long id) {
 		User user = userService.findById(id).orElseThrow(() -> new NotFoundException("User Not Found"));
 
-		Store store = user.getStore();
-		if (store == null) {
-			throw new StoreNotFoundException("상점을 찾을 수 없습니다.");
-		}
-
 		ProjectRequest projectRequest = projectRequestService.findById(projectRequestId)
 			.orElseThrow(() -> new IllegalArgumentException("의뢰서를 찾을 수 없습니다."));
 
-		if (!projectRequest.getStore().getId().equals(store.getId())) {
+		// 해당 프로젝트 요청의 스토어가 사용자의 스토어 중 하나인지 확인
+		Store projectStore = projectRequest.getStore();
+		if (!projectStore.getUser().getId().equals(user.getId())) {
 			throw new IllegalArgumentException("본인의 의뢰서만 삭제할 수 있습니다.");
 		}
 

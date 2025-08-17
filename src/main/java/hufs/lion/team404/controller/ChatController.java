@@ -26,16 +26,34 @@ public class ChatController {
 
 	private final ChatModel chatModel;
 
-	@PostMapping("/create")
+	@PostMapping("/create/with-store")
 	@Operation(
-		summary = "채팅방 생성",
-		description = "현재 사용자와 채팅방을 생성해줍니다.",
+		summary = "업체와 채팅방 생성",
+		description = "학생이 업체와 채팅방을 생성합니다.",
 		security = @SecurityRequirement(name = "Bearer Authentication")
 	)
-	public ApiResponse<?> createRoom(@AuthenticationPrincipal UserPrincipal authentication,
-		@RequestParam Long target_id) {
+	public ApiResponse<?> createRoomWithStore(
+		@AuthenticationPrincipal UserPrincipal authentication,
+		@RequestParam String businessNumber) {
+		
 		Long userId = authentication.getId();
-		chatModel.createChatRoom(userId, target_id);
+		chatModel.createChatRoomWithStore(userId, businessNumber);
+		return ApiResponse.success("채팅방을 성공적으로 생성하였습니다.");
+	}
+
+	@PostMapping("/create/with-student")
+	@Operation(
+		summary = "학생과 채팅방 생성",
+		description = "업체가 학생과 채팅방을 생성합니다.",
+		security = @SecurityRequirement(name = "Bearer Authentication")
+	)
+	public ApiResponse<?> createRoomWithStudent(
+		@AuthenticationPrincipal UserPrincipal authentication,
+		@RequestParam Long studentId,
+		@RequestParam String businessNumber) {
+		
+		Long userId = authentication.getId();
+		chatModel.createChatRoomWithStudent(userId, studentId, businessNumber);
 		return ApiResponse.success("채팅방을 성공적으로 생성하였습니다.");
 	}
 }

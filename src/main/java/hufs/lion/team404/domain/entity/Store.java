@@ -18,18 +18,15 @@ import java.util.List;
 public class Store {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "business_number", nullable = false, unique = true)
+    private String businessNumber;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(nullable = false)
     private String storeName;
-
-    @Column(unique = true, nullable = false)
-    private String businessNumber;
 
     private String address;
 
@@ -56,11 +53,11 @@ public class Store {
 
 
     @Builder
-    public Store(User user, String storeName, String businessNumber, String address, String contact, String category,
+    public Store(String businessNumber, User user, String storeName, String address, String contact, String category,
         String introduction, Double temperature) {
+        this.businessNumber = businessNumber;
         this.user = user;
         this.storeName = storeName;
-        this.businessNumber = businessNumber;
         this.address = address;
         this.contact = contact;
         this.category = category;
