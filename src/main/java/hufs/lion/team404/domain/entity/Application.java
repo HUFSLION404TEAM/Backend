@@ -34,6 +34,7 @@ public class Application {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20)
+	@Builder.Default
 	private Status status = Status.DRAFT;
 
 
@@ -74,8 +75,7 @@ public class Application {
 
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
-	@Builder.Default
-	private Status status = Status.DRAFT;
+
 
 	@PrePersist
 	void prePersist() {
