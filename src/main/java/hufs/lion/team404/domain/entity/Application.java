@@ -74,6 +74,13 @@ public class Application {
 
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
+	@Builder.Default
+	private Status status = Status.DRAFT;
+
+	@PrePersist
+	void prePersist() {
+		if (status == null) status = Status.DRAFT;
+	}
 }
 
 
