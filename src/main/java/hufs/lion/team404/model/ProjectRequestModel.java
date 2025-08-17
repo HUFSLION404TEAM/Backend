@@ -8,19 +8,24 @@ import hufs.lion.team404.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ProjectRequestModel {
     private final ProjectRequestService projectRequestService;
+    private final ProjectRequestFileService projectRequestFileService;
     private final UserService userService;
     private final StoreService storeService;
     private final MatchingService matchingService;
 
-    public Long createProjectRequest(ProjectRequestCreateRequestDto dto, String email) {
+
+    @Transactional
+    public Long createProjectRequest(ProjectRequestCreateRequestDto dto, String email, List<MultipartFile> files) {
         User user = userService.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
@@ -58,17 +63,20 @@ public class ProjectRequestModel {
                 .build();
 
         ProjectRequest savedProjectRequest = projectRequestService.save(projectRequest);
-        
+
         // ProjectRequest 생성 시 Matching도 함께 생성
         Matching matching = new Matching();
         matching.setProjectRequest(savedProjectRequest);
         matching.setMatchedBy(Matching.MatchedBy.STORE_OFFER); // 가게에서 의뢰한 경우
         matching.setStatus(Matching.Status.PENDING);
         matching.setOfferedAt(java.time.LocalDateTime.now());
-        
+
         matchingService.save(matching);
 
-        return savedProjectRequest.getId();
+        // 첨부파일 추가 관련 로직
+        projectRequestFileService.update(projectRequest, files);
+
+        return projectRequest.getId();
     }
 
     // 의뢰서 조회
@@ -81,9 +89,20 @@ public class ProjectRequestModel {
 
     // 의뢰서 수정
     @Transactional
-    public ProjectRequest update(Long projectRequestId, ProjectRequestUpdateRequestDto dto, Long userId) {
+    public ProjectRequest update(Long projectRequestId, ProjectRequestUpdateRequestDto dto, Long userId,
+                                 List<MultipartFile> files, boolean clearFiles) {
 
         ProjectRequest updated = projectRequestService.update(projectRequestId, dto, userId);
+
+        if (clearFiles) {
+            projectRequestFileService.deleteAllByProjectRequestId(updated.getId());
+
+            if (files != null && !files.isEmpty()) {
+                projectRequestFileService.update(updated, files);
+            }
+        }
+
+        projectRequestFileService.update(updated, files);
         return updated;
     }
 
