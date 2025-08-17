@@ -45,6 +45,9 @@ public class ApplicationService {
 	public ApplicationResponse saveDraft(Long studentId, Long applicationId, ApplicationSaveRequestDto req) {
 		Application a = repo.findByIdAndStudentId(applicationId, studentId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다."));
+		if (req.getStoreId() != null && !req.getStoreId().equals(a.getStoreId())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "요청의 storeId가 대상 지원서와 일치하지 않습니다.");
+		}
 
 		if (a.getStatus() != Application.Status.DRAFT) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "제출되었거나 삭제된 지원서는 수정할 수 없습니다.");
@@ -119,6 +122,8 @@ public class ApplicationService {
 		applyNonNull(a::setRequirements,    req.getRequirements());
 		applyNonNull(a::setExpectedOutcome, req.getExpectedOutcome());
 	}
+
+
 }
 
 

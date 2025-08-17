@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotNull;
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class ApplicationStartRequestDto {
 	@NotNull private Long storeId;
 	private String title;
@@ -17,5 +19,6 @@ public class ApplicationStartRequestDto {
 	private String requirements;
 	private String expectedOutcome;
 }
+
 
 
