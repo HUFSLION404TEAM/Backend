@@ -26,10 +26,6 @@ public class Report {
     @JoinColumn(name = "reporter_id", nullable = false)
     private User reporter;
     
-    @ManyToOne
-    @JoinColumn(name = "reported_id", nullable = false)
-    private User reported;
-    
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReporterType reporterType;
@@ -68,5 +64,26 @@ public class Report {
     
     public enum Status {
         PENDING, UNDER_REVIEW, RESOLVED, DISMISSED, ESCALATED
+    }
+    
+    /**
+     * 매칭에서 신고 대상자를 가져오는 메서드
+     */
+    public User getReported() {
+        if (matching == null || matching.getChatRoom() == null) {
+            return null;
+        }
+        
+        User student = matching.getChatRoom().getStudent().getUser();
+        User store = matching.getChatRoom().getStore().getUser();
+        
+        // 신고자가 아닌 사람이 신고 대상자
+        if (reporter.getId().equals(student.getId())) {
+            return store;
+        } else if (reporter.getId().equals(store.getId())) {
+            return student;
+        }
+        
+        return null;
     }
 }

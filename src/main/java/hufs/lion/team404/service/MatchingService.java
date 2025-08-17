@@ -53,6 +53,10 @@ public class MatchingService {
         return matchingRepository.findByPortfolioStudentUserIdOrderByCreatedAtDesc(studentUserId);
     }
     
+    public List<Matching> findByChatRoomStudentUserIdOrderByCreatedAtDesc(Long studentUserId) {
+        return matchingRepository.findByChatRoomStudentUserIdOrderByCreatedAtDesc(studentUserId);
+    }
+    
     public List<Matching> findAll() {
         return matchingRepository.findAll();
     }

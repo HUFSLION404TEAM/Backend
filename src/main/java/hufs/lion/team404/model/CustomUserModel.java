@@ -21,7 +21,6 @@ public class CustomUserModel {
 			.name(user.getName())
 			.email(user.getEmail())
 			.socialProvider(user.getSocialProvider())
-			.temperature(user.getTemperature())
 			.updatedAt(user.getUpdatedAt())
 			.createdAt(user.getCreatedAt())
 			.profileImage(user.getProfileImage())

@@ -16,21 +16,19 @@ public class UserResponse {
 	private String profileImage;
 	private String socialProvider;
 	private String socialId;
-	private String temperature;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private UserRole userRole;
 
 	@Builder
 	public UserResponse(Long id, String name, String email, String profileImage, String socialProvider, String socialId,
-		String temperature, LocalDateTime createdAt, LocalDateTime updatedAt, UserRole userRole) {
+		LocalDateTime createdAt, LocalDateTime updatedAt, UserRole userRole) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.profileImage = profileImage;
 		this.socialProvider = socialProvider;
 		this.socialId = socialId;
-		this.temperature = temperature;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.userRole = userRole;

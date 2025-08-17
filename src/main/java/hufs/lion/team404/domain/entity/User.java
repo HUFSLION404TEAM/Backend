@@ -46,8 +46,6 @@ public class User {
 
 	private String socialId;
 
-	private String temperature;
-
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
@@ -71,17 +69,9 @@ public class User {
 	@JsonIgnore
 	private List<Review> writtenReviews;
 
-	@OneToMany(mappedBy = "reviewee", cascade = CascadeType.ALL)
-	@JsonIgnore
-	private List<Review> receivedReviews;
-
 	@OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL)
 	@JsonIgnore
 	private List<Report> reportsMade;
-
-	@OneToMany(mappedBy = "reported", cascade = CascadeType.ALL)
-	@JsonIgnore
-	private List<Report> reportsReceived;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	@JsonIgnore
@@ -105,25 +95,22 @@ public class User {
 
 	@Builder
 	public User(String name, String email, String profileImage, String socialProvider, String socialId,
-		String temperature, LocalDateTime createdAt, LocalDateTime updatedAt, Student student, Store store,
-		List<ChatMessage> sentMessages, List<Review> writtenReviews, List<Review> receivedReviews,
-		List<Report> reportsMade, List<Report> reportsReceived, List<Notification> notifications,
+		LocalDateTime createdAt, LocalDateTime updatedAt, Student student, Store store,
+		List<ChatMessage> sentMessages, List<Review> writtenReviews,
+		List<Report> reportsMade, List<Notification> notifications,
 		List<Favorite> favorites, List<Payment> payments, List<Payment> receivedPayments, UserRole userRole) {
 		this.name = name;
 		this.email = email;
 		this.profileImage = profileImage;
 		this.socialProvider = socialProvider;
 		this.socialId = socialId;
-		this.temperature = temperature;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.student = student;
 		this.store = store;
 		this.sentMessages = sentMessages;
 		this.writtenReviews = writtenReviews;
-		this.receivedReviews = receivedReviews;
 		this.reportsMade = reportsMade;
-		this.reportsReceived = reportsReceived;
 		this.notifications = notifications;
 		this.favorites = favorites;
 		this.payments = payments;

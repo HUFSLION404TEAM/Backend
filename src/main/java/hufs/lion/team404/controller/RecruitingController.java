@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import hufs.lion.team404.domain.dto.response.ApiResponse;
+import hufs.lion.team404.domain.dto.response.RecruitingDetailResponse;
+import hufs.lion.team404.domain.dto.response.RecruitingListResponse;
 import hufs.lion.team404.model.RecruitingModel;
 import hufs.lion.team404.oauth.jwt.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,6 +57,31 @@ public class RecruitingController {
 			expectedResults, detailRequirement, images);
 
 		return ApiResponse.success(recruiting_id);
+	}
+
+	@GetMapping("/")
+	@Operation(
+		summary = "구인글 전체 조회",
+		description = "모든 구인글 목록을 조회합니다."
+	)
+	public ApiResponse<List<RecruitingListResponse>> getAllRecruitings() {
+
+		List<RecruitingListResponse> responses = recruitingModel.getAllRecruitings();
+		return ApiResponse.success("구인글 목록을 성공적으로 조회했습니다.", responses);
+	}
+
+	@GetMapping("/{recruitingId}")
+	@Operation(
+		summary = "구인글 상세 조회",
+		description = "구인글의 상세 정보를 조회합니다.",
+		security = @SecurityRequirement(name = "Bearer Authentication")
+	)
+	public ApiResponse<RecruitingDetailResponse> getRecruitingDetail(
+		@PathVariable Long recruitingId,
+		@AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+		RecruitingDetailResponse response = recruitingModel.getRecruitingDetail(recruitingId);
+		return ApiResponse.success("구인글 상세 정보를 성공적으로 조회했습니다.", response);
 	}
 
 }

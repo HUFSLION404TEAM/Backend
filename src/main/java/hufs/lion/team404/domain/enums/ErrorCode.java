@@ -64,7 +64,17 @@ public enum ErrorCode {
 
     // 공고 에러
     IMAGE_COUNT_EXCEEDED(HttpStatus.BAD_REQUEST, "IMAGE_001", "이미지 갯수가 초과되었습니다."),
-    INVALID_INPUT(HttpStatus.BAD_REQUEST, "IMAGE_002", "파일이 비어있습니다.")
+    INVALID_INPUT(HttpStatus.BAD_REQUEST, "IMAGE_002", "파일이 비어있습니다."),
+
+    // 리뷰 에러
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_001", "리뷰를 찾을 수 없습니다."),
+    REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, "REVIEW_002", "이미 리뷰를 작성했습니다."),
+    REVIEW_ACCESS_DENIED(HttpStatus.FORBIDDEN, "REVIEW_003", "리뷰에 접근할 권한이 없습니다."),
+
+    // 신고 에러
+    REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "REPORT_001", "신고를 찾을 수 없습니다."),
+    REPORT_ALREADY_EXISTS(HttpStatus.CONFLICT, "REPORT_002", "이미 같은 내용으로 신고했습니다."),
+    REPORT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "REPORT_003", "신고에 접근할 권한이 없습니다.")
     ;
 
     private final HttpStatus status;

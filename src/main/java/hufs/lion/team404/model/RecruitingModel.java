@@ -2,10 +2,13 @@ package hufs.lion.team404.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import hufs.lion.team404.domain.dto.response.RecruitingDetailResponse;
+import hufs.lion.team404.domain.dto.response.RecruitingListResponse;
 import hufs.lion.team404.domain.entity.Recruiting;
 import hufs.lion.team404.domain.entity.RecruitingImage;
 import hufs.lion.team404.domain.entity.Store;
@@ -70,6 +73,27 @@ public class RecruitingModel {
 			}
 		}
 		return recruiting.getId();
+	}
+
+	/**
+	 * 구인글 상세 조회
+	 */
+	public RecruitingDetailResponse getRecruitingDetail(Long recruitingId) {
+		Recruiting recruiting = recruitingService.findById(recruitingId)
+			.orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND, "구인글을 찾을 수 없습니다."));
+
+		return RecruitingDetailResponse.fromEntity(recruiting);
+	}
+
+	/**
+	 * 구인글 전체 목록 조회
+	 */
+	public List<RecruitingListResponse> getAllRecruitings() {
+		List<Recruiting> recruitings = recruitingService.findAll();
+		
+		return recruitings.stream()
+			.map(RecruitingListResponse::fromEntity)
+			.collect(Collectors.toList());
 	}
 
 }

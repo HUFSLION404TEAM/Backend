@@ -1,6 +1,8 @@
 package hufs.lion.team404.service;
 
+import hufs.lion.team404.domain.entity.Matching;
 import hufs.lion.team404.domain.entity.Report;
+import hufs.lion.team404.domain.entity.User;
 import hufs.lion.team404.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,10 +35,6 @@ public class ReportService {
         return reportRepository.findByReporterId(reporterId);
     }
     
-    public List<Report> findByReportedId(Long reportedId) {
-        return reportRepository.findByReportedId(reportedId);
-    }
-    
     public List<Report> findByStatus(Report.Status status) {
         return reportRepository.findByStatus(status);
     }
@@ -49,10 +47,22 @@ public class ReportService {
         return reportRepository.findByStatusOrderByCreatedAtDesc(status);
     }
     
-    public long countByReportedIdAndStatus(Long reportedId, Report.Status status) {
-        return reportRepository.countByReportedIdAndStatus(reportedId, status);
+    public List<Report> findByReporterOrderByCreatedAtDesc(User reporter) {
+        return reportRepository.findByReporterOrderByCreatedAtDesc(reporter);
     }
     
+    public List<Report> findAllOrderByCreatedAtDesc() {
+        return reportRepository.findAllByOrderByCreatedAtDesc();
+    }
+    
+    public boolean existsByMatchingAndReporter(Matching matching, User reporter) {
+        return reportRepository.existsByMatchingAndReporter(matching, reporter);
+    }
+    
+    public long countByStatus(Report.Status status) {
+        return reportRepository.countByStatus(status);
+    }
+
     public List<Report> findAll() {
         return reportRepository.findAll();
     }

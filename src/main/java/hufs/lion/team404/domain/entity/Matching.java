@@ -90,4 +90,13 @@ public class Matching {
     public boolean isPending() {
         return this.status == Status.PENDING;
     }
+    
+    public boolean isAccepted() {
+        return this.status == Status.ACCEPTED;
+    }
+    
+    public void complete() {
+        this.status = Status.COMPLETED;
+        this.completedAt = LocalDateTime.now();
+    }
 }
