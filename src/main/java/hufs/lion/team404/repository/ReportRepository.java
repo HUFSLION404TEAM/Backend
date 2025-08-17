@@ -11,14 +11,6 @@ import java.util.List;
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
     
-    List<Report> findByMatchingId(Long matchingId);
-    
-    List<Report> findByReporterId(Long reporterId);
-
-    List<Report> findByStatus(Report.Status status);
-    
-    List<Report> findByReportType(Report.ReportType reportType);
-    
     List<Report> findByStatusOrderByCreatedAtDesc(Report.Status status);
     
     List<Report> findByReporterOrderByCreatedAtDesc(User reporter);
@@ -26,6 +18,4 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findAllByOrderByCreatedAtDesc();
     
     boolean existsByMatchingAndReporter(Matching matching, User reporter);
-    
-    long countByStatus(Report.Status status);
 }

@@ -27,22 +27,6 @@ public class ReportService {
         return reportRepository.findById(id);
     }
     
-    public List<Report> findByMatchingId(Long matchingId) {
-        return reportRepository.findByMatchingId(matchingId);
-    }
-    
-    public List<Report> findByReporterId(Long reporterId) {
-        return reportRepository.findByReporterId(reporterId);
-    }
-    
-    public List<Report> findByStatus(Report.Status status) {
-        return reportRepository.findByStatus(status);
-    }
-    
-    public List<Report> findByReportType(Report.ReportType reportType) {
-        return reportRepository.findByReportType(reportType);
-    }
-    
     public List<Report> findByStatusOrderByCreatedAtDesc(Report.Status status) {
         return reportRepository.findByStatusOrderByCreatedAtDesc(status);
     }
@@ -57,18 +41,5 @@ public class ReportService {
     
     public boolean existsByMatchingAndReporter(Matching matching, User reporter) {
         return reportRepository.existsByMatchingAndReporter(matching, reporter);
-    }
-    
-    public long countByStatus(Report.Status status) {
-        return reportRepository.countByStatus(status);
-    }
-
-    public List<Report> findAll() {
-        return reportRepository.findAll();
-    }
-    
-    @Transactional
-    public void deleteById(Long id) {
-        reportRepository.deleteById(id);
     }
 }

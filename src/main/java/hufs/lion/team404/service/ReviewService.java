@@ -27,21 +27,12 @@ public class ReviewService {
         return reviewRepository.findById(id);
     }
     
-    public List<Review> findByMatchingId(Long matchingId) {
-        return reviewRepository.findByMatchingId(matchingId);
-    }
-    
     public List<Review> findByMatching(Matching matching) {
         return reviewRepository.findByMatching(matching);
     }
     
-    public List<Review> findByReviewerId(Long reviewerId) {
-        return reviewRepository.findByReviewerId(reviewerId);
-    }
-    
     public List<Review> findByRevieweeOrderByCreatedAtDesc(User reviewee) {
         // 동적으로 리뷰 대상자가 해당 유저인 리뷰들을 찾아야 함
-        // 임시로 모든 리뷰를 가져와서 필터링 (성능상 문제가 있을 수 있음)
         return reviewRepository.findAll().stream()
                 .filter(review -> {
                     User targetReviewee = review.getReviewee();
@@ -51,20 +42,7 @@ public class ReviewService {
                 .collect(java.util.stream.Collectors.toList());
     }
     
-    public List<Review> findByReviewerType(Review.ReviewerType reviewerType) {
-        return reviewRepository.findByReviewerType(reviewerType);
-    }
-    
     public boolean existsByMatchingAndReviewer(Matching matching, User reviewer) {
         return reviewRepository.existsByMatchingAndReviewer(matching, reviewer);
-    }
-    
-    public List<Review> findAll() {
-        return reviewRepository.findAll();
-    }
-    
-    @Transactional
-    public void deleteById(Long id) {
-        reviewRepository.deleteById(id);
     }
 }
