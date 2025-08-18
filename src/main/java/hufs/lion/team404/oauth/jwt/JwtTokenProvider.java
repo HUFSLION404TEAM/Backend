@@ -1,5 +1,7 @@
 package hufs.lion.team404.oauth.jwt;
 
+import hufs.lion.team404.domain.enums.ErrorCode;
+import hufs.lion.team404.exception.CustomException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

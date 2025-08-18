@@ -26,10 +26,6 @@ public class Review {
     @JoinColumn(name = "reviewer_id", nullable = false)
     private User reviewer;
     
-    @ManyToOne
-    @JoinColumn(name = "reviewee_id", nullable = false)
-    private User reviewee;
-    
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReviewerType reviewerType;
@@ -48,5 +44,26 @@ public class Review {
     
     public enum ReviewerType {
         STORE, STUDENT
+    }
+    
+    /**
+     * 매칭에서 리뷰 대상자를 가져오는 메서드
+     */
+    public User getReviewee() {
+        if (matching == null || matching.getChatRoom() == null) {
+            return null;
+        }
+        
+        User student = matching.getChatRoom().getStudent().getUser();
+        User store = matching.getChatRoom().getStore().getUser();
+        
+        // 리뷰어가 아닌 사람이 리뷰 대상자
+        if (reviewer.getId().equals(student.getId())) {
+            return store;
+        } else if (reviewer.getId().equals(store.getId())) {
+            return student;
+        }
+        
+        return null;
     }
 }

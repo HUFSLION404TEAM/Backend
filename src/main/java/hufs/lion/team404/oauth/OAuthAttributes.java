@@ -92,7 +92,6 @@ public class OAuthAttributes {
 			.userRole(UserRole.TEMP)
 			.socialProvider(socialProvider)
 			.socialId(socialId)
-			.temperature("36.5")
 			.build();
 	}
 }

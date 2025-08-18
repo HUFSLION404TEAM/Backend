@@ -22,4 +22,7 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
     List<Matching> findByProjectRequestStoreUserIdOrderByCreatedAtDesc(Long storeUserId);
     
     List<Matching> findByPortfolioStudentUserIdOrderByCreatedAtDesc(Long studentUserId);
+    
+    // 채팅방의 학생으로 매칭 조회
+    List<Matching> findByChatRoomStudentUserIdOrderByCreatedAtDesc(Long studentUserId);
 }

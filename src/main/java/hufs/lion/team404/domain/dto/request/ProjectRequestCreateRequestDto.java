@@ -11,9 +11,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class ProjectRequestCreateRequestDto {
-    @NotNull
-    private Long storeId;
-    @NotBlank
+
+    @NotNull(message = "채팅방 ID는 필수입니다")
+    private Long chatRoomId;
+
     private String title;
     private String projectOverview;
 
@@ -21,20 +22,14 @@ public class ProjectRequestCreateRequestDto {
     private LocalDate startDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
-
-    @Positive
     private Integer estimatedDuration;
     private String detailedTasks;
     private String requiredSkills;
-
-    @Positive
     private Integer budget;
     private String paymentMethod;
     private String workLocation;
     private String workSchedule;
     private String preferredMajor;
-
-    @Min(1) @Max(4)
     private Integer minGrade;
     private String requiredExperience;
     private String additionalNotes;

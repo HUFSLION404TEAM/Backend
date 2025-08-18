@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import hufs.lion.team404.domain.entity.Store;
+import hufs.lion.team404.domain.entity.User;
 import hufs.lion.team404.repository.StoreRepository;
 import hufs.lion.team404.domain.dto.request.StoreUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,15 @@ public class StoreService {
         return storeRepository.save(store);
     }
 
-    public Optional<Store> findById(Long id) {
-        return storeRepository.findById(id);
+    public Optional<Store> findById(String businessNumber) {
+        return storeRepository.findById(businessNumber);
     }
 
-    public Optional<Store> findByUserId(Long userId) {
+    public List<Store> findByUser(User user) {
+        return storeRepository.findByUser(user);
+    }
+
+    public List<Store> findByUserId(Long userId) {
         return storeRepository.findByUserId(userId);
     }
 
@@ -52,37 +57,41 @@ public class StoreService {
     }
 
     @Transactional
-    public void deleteById(Long id) {
-        storeRepository.deleteById(id);
+    public void deleteById(String businessNumber) {
+        storeRepository.deleteById(businessNumber);
     }
+
     public List<Store> findAllStores() {
         return storeRepository.findAll();
     }
-    public Store getStoreById(Long storeId) {
-        return storeRepository.findById(storeId)
-            .orElseThrow(() -> new NotFoundException("해당 가게를 찾을 수 없습니다.: id=" + storeId));
+
+    public Store getStoreById(String businessNumber) {
+        return storeRepository.findById(businessNumber)
+            .orElseThrow(() -> new NotFoundException("해당 가게를 찾을 수 없습니다.: businessNumber=" + businessNumber));
     }
+
     @Transactional
-    public Store updateStore(Long storeId, StoreUpdateRequestDto dto, Long userId) {
-        Store store = storeRepository.findById(storeId)
-            .orElseThrow(() -> new NotFoundException("Store not found: id=" + storeId));
+    public Store updateStore(String businessNumber, StoreUpdateRequestDto dto, Long userId) {
+        Store store = storeRepository.findById(businessNumber)
+            .orElseThrow(() -> new NotFoundException("Store not found: businessNumber=" + businessNumber));
 
         if (!store.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("해당 업체를 수정할 권한이 없습니다.");
         }
 
         if (dto.getStoreName() != null) store.setStoreName(dto.getStoreName());
-        if (dto.getAddress()   != null) store.setAddress(dto.getAddress());
-        if (dto.getContact()   != null) store.setContact(dto.getContact());
-        if (dto.getCategory()  != null) store.setCategory(dto.getCategory());
-        if (dto.getIntroduction()!= null) store.setIntroduction(dto.getIntroduction());
+        if (dto.getAddress() != null) store.setAddress(dto.getAddress());
+        if (dto.getContact() != null) store.setContact(dto.getContact());
+        if (dto.getCategory() != null) store.setCategory(dto.getCategory());
+        if (dto.getIntroduction() != null) store.setIntroduction(dto.getIntroduction());
 
         return store;
     }
+
     @Transactional
-    public void deleteStore(Long storeId, Long userId) {
-        Store store = storeRepository.findById(storeId)
-            .orElseThrow(() -> new NotFoundException("Store not found: id=" + storeId));
+    public void deleteStore(String businessNumber, Long userId) {
+        Store store = storeRepository.findById(businessNumber)
+            .orElseThrow(() -> new NotFoundException("Store not found: businessNumber=" + businessNumber));
         // 소유자 검증
         if (!store.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("해당 업체를 삭제할 권한이 없습니다.");
@@ -90,4 +99,3 @@ public class StoreService {
         storeRepository.delete(store); // 물리 삭제
     }
 }
-

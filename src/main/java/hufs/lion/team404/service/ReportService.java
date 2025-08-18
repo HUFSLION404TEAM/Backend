@@ -1,6 +1,8 @@
 package hufs.lion.team404.service;
 
+import hufs.lion.team404.domain.entity.Matching;
 import hufs.lion.team404.domain.entity.Report;
+import hufs.lion.team404.domain.entity.User;
 import hufs.lion.team404.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,40 +27,19 @@ public class ReportService {
         return reportRepository.findById(id);
     }
     
-    public List<Report> findByMatchingId(Long matchingId) {
-        return reportRepository.findByMatchingId(matchingId);
-    }
-    
-    public List<Report> findByReporterId(Long reporterId) {
-        return reportRepository.findByReporterId(reporterId);
-    }
-    
-    public List<Report> findByReportedId(Long reportedId) {
-        return reportRepository.findByReportedId(reportedId);
-    }
-    
-    public List<Report> findByStatus(Report.Status status) {
-        return reportRepository.findByStatus(status);
-    }
-    
-    public List<Report> findByReportType(Report.ReportType reportType) {
-        return reportRepository.findByReportType(reportType);
-    }
-    
     public List<Report> findByStatusOrderByCreatedAtDesc(Report.Status status) {
         return reportRepository.findByStatusOrderByCreatedAtDesc(status);
     }
     
-    public long countByReportedIdAndStatus(Long reportedId, Report.Status status) {
-        return reportRepository.countByReportedIdAndStatus(reportedId, status);
+    public List<Report> findByReporterOrderByCreatedAtDesc(User reporter) {
+        return reportRepository.findByReporterOrderByCreatedAtDesc(reporter);
     }
     
-    public List<Report> findAll() {
-        return reportRepository.findAll();
+    public List<Report> findAllOrderByCreatedAtDesc() {
+        return reportRepository.findAllByOrderByCreatedAtDesc();
     }
     
-    @Transactional
-    public void deleteById(Long id) {
-        reportRepository.deleteById(id);
+    public boolean existsByMatchingAndReporter(Matching matching, User reporter) {
+        return reportRepository.existsByMatchingAndReporter(matching, reporter);
     }
 }

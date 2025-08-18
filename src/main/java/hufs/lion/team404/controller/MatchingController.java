@@ -1,7 +1,7 @@
 package hufs.lion.team404.controller;
 
 import hufs.lion.team404.domain.dto.response.ApiResponse;
-import hufs.lion.team404.domain.entity.Matching;
+import hufs.lion.team404.domain.dto.response.MatchingResponse;
 import hufs.lion.team404.model.MatchingModel;
 import hufs.lion.team404.oauth.jwt.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/matching")
@@ -32,7 +34,7 @@ public class MatchingController {
             @PathVariable Long matchingId,
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
         
-        Long id = matchingModel.acceptMatching(matchingId, userPrincipal.getEmail());
+        Long id = matchingModel.acceptMatching(matchingId, userPrincipal.getId());
         return ApiResponse.success("매칭이 수락되었습니다.", id);
     }
     
@@ -56,11 +58,38 @@ public class MatchingController {
             description = "매칭 정보를 조회합니다.",
             security = @SecurityRequirement(name = "Bearer Authentication")
     )
-    public ApiResponse<Matching> getMatching(
+    public ApiResponse<MatchingResponse> getMatching(
             @PathVariable Long matchingId,
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
         
-        Matching matching = matchingModel.getMatching(matchingId, userPrincipal.getEmail());
+        MatchingResponse matching = matchingModel.getMatching(matchingId, userPrincipal.getEmail());
         return ApiResponse.success("매칭 정보를 성공적으로 조회했습니다.", matching);
+    }
+    
+    @GetMapping("/")
+    @Operation(
+            summary = "내 매칭 목록 조회",
+            description = "학생이 받은 매칭 목록을 조회합니다.",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
+    public ApiResponse<List<MatchingResponse>> getMyMatchings(
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        
+        List<MatchingResponse> matchings = matchingModel.getStudentMatchings(userPrincipal.getEmail());
+        return ApiResponse.success("매칭 목록을 성공적으로 조회했습니다.", matchings);
+    }
+    
+    @PostMapping("/{matchingId}/complete")
+    @Operation(
+            summary = "매칭 완료 (학생용)",
+            description = "학생이 작업을 완료하고 매칭을 종료합니다. 자동으로 결제가 진행됩니다.",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
+    public ApiResponse<Long> completeMatching(
+            @PathVariable Long matchingId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        
+        Long id = matchingModel.completeMatching(matchingId, userPrincipal.getEmail());
+        return ApiResponse.success("매칭이 완료되었습니다. 결제가 진행됩니다.", id);
     }
 }

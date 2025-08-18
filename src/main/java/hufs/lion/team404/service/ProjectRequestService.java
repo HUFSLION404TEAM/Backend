@@ -30,8 +30,12 @@ public class ProjectRequestService {
         return projectRequestRepository.findById(id);
     }
     
-    public List<ProjectRequest> findByStoreId(Long storeId) {
-        return projectRequestRepository.findByStoreId(storeId);
+    public List<ProjectRequest> findByStoreBusinessNumber(String businessNumber) {
+        return projectRequestRepository.findByStoreBusinessNumber(businessNumber);
+    }
+    
+    public List<ProjectRequest> findByStore(Store store) {
+        return projectRequestRepository.findByStore(store);
     }
     
     public List<ProjectRequest> findByStatus(ProjectRequest.Status status) {
@@ -67,8 +71,9 @@ public class ProjectRequestService {
         User user = userService.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        Store store = user.getStore();
-        if (store == null || !projectRequest.getStore().getId().equals(store.getId())) {
+        // 프로젝트 요청의 스토어가 사용자의 스토어 중 하나인지 확인
+        Store projectStore = projectRequest.getStore();
+        if (!projectStore.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException("본인의 의뢰서만 수정할 수 있습니다.");
         }
 

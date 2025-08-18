@@ -55,34 +55,34 @@ public class StoreController {
 	public ApiResponse<List<StoreReadResponseDto>> getAllStores() {
 		return ApiResponse.success(storeModel.getAllStores());
 	}
-	@GetMapping("/{storeId}")
-	@Operation(summary = "업체 단건 조회", description = "업체 ID로 업체 정보를 조회합니다.")
-	public ApiResponse<StoreReadResponseDto> getStore(@PathVariable Long storeId) {
-		return ApiResponse.success(storeModel.getStoreById(storeId));
+	@GetMapping("/{businessNumber}")
+	@Operation(summary = "업체 단건 조회", description = "사업자번호로 업체 정보를 조회합니다.")
+	public ApiResponse<StoreReadResponseDto> getStore(@PathVariable String businessNumber) {
+		return ApiResponse.success(storeModel.getStoreByBusinessNumber(businessNumber));
 	}
-	@PutMapping("/{storeId}")
+	@PutMapping("/{businessNumber}")
 	@Operation(summary = "업체 정보 수정", description = "업체의 일부 정보를 수정합니다.",
 		security = @SecurityRequirement(name = "Bearer Authentication"))
 	public ApiResponse<StoreReadResponseDto> updateStore(
-		@PathVariable Long storeId,
+		@PathVariable String businessNumber,
 		@AuthenticationPrincipal UserPrincipal authentication,
 		@RequestBody @Valid StoreUpdateRequestDto dto) {
 
 		Long userId = authentication.getId();
-		return ApiResponse.success(storeModel.updateStore(storeId, dto, userId));
+		return ApiResponse.success(storeModel.updateStore(businessNumber, dto, userId));
 	}
-	@DeleteMapping("/{storeId}")
+	@DeleteMapping("/{businessNumber}")
 	@Operation(
 		summary = "업체 삭제",
 		description = "업체를 삭제합니다.",
 		security = @SecurityRequirement(name = "Bearer Authentication")
 	)
 	public ApiResponse<Void> deleteStore(
-		@PathVariable Long storeId,
+		@PathVariable String businessNumber,
 		@AuthenticationPrincipal UserPrincipal authentication) {
 
 		Long userId = authentication.getId();
-		storeModel.deleteStore(storeId, userId);
+		storeModel.deleteStore(businessNumber, userId);
 		return ApiResponse.success("삭제되었습니다.");
 	}
 
