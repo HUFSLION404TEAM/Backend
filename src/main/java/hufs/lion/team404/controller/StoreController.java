@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PutMapping;
 import hufs.lion.team404.domain.dto.request.StoreUpdateRequestDto;
+import hufs.lion.team404.domain.dto.response.StoreMyPageResponse;
 import hufs.lion.team404.domain.dto.response.StoreReadResponseDto;
 import hufs.lion.team404.domain.dto.request.StoreCreateRequestDto;
 import hufs.lion.team404.domain.dto.response.ApiResponse;
@@ -21,6 +23,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -85,5 +88,33 @@ public class StoreController {
 		storeModel.deleteStore(businessNumber, userId);
 		return ApiResponse.success("삭제되었습니다.");
 	}
+
+	@GetMapping("/mypage")
+	@Operation(
+		summary = "업체 마이페이지 조회",
+		description = "업체의 마이페이지 정보를 조회합니다. 유저 정보, 매칭 이력, 업체 리스트를 포함합니다.",
+		security = @SecurityRequirement(name = "Bearer Authentication")
+	)
+	public ApiResponse<StoreMyPageResponse> getMyPage(
+		@AuthenticationPrincipal UserPrincipal authentication) {
+
+		Long userId = authentication.getId();
+		StoreMyPageResponse myPageData = storeModel.getMyPage(userId);
+		return ApiResponse.success("마이페이지 정보를 성공적으로 조회했습니다.", myPageData);
+	}
+
+	@GetMapping("/detail")
+	@Operation(
+		summary = "업체 마이페이지 조회",
+		description = "업체의 마이페이지 정보를 조회합니다. 유저 정보, 매칭 이력, 업체 리스트를 포함합니다.",
+		security = @SecurityRequirement(name = "Bearer Authentication")
+	)
+	public ApiResponse<?> getMyStoreDetail(
+		@AuthenticationPrincipal UserPrincipal userPrincipal,
+		@RequestParam String businessNumber
+	) {
+		return ApiResponse.success(storeModel.getStoreDetail(businessNumber));
+	}
+
 
 }

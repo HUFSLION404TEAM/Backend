@@ -1,6 +1,7 @@
 package hufs.lion.team404.service;
 
 import hufs.lion.team404.domain.entity.Matching;
+import hufs.lion.team404.domain.entity.Store;
 import hufs.lion.team404.repository.MatchingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,18 @@ public class MatchingService {
 
     public List<Matching> findByChatRoomStoreBusinessNumberOrderByCreatedAtDesc(String businessNumber) {
         return matchingRepository.findByChatRoomStoreBusinessNumberOrderByCreatedAtDesc(businessNumber);
+    }
+
+    public List<Matching> findByChatRoomStoreUserIdOrderByCreatedAtDesc(Long userId) {
+        return matchingRepository.findByChatRoomStoreUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    public int countByChatRoomStore(Store store) {
+        return matchingRepository.countByChatRoomStore(store);
+    }
+
+    public int countByChatRoomStoreAndStatus(Store store, Matching.Status status) {
+        return matchingRepository.countByChatRoomStoreAndStatus(store, status);
     }
     
     public List<Matching> findAll() {
