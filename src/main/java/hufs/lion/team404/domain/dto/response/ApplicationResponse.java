@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -16,7 +18,7 @@ public class ApplicationResponse {
 
 	private Long id;
 	private Long studentId;
-	private Long storeId;
+	private String storeBusinessNumber;  // Long storeId → String storeBusinessNumber
 	private String status;          // enum을 문자열로 내려줌 (원하면 Application.Status로 바꿔도 OK)
 
 	private String title;
@@ -37,11 +39,14 @@ public class ApplicationResponse {
 	private LocalDateTime submittedAt;
 	private LocalDateTime deletedAt;
 
+	// 첨부파일 정보
+	private List<String> fileUrls;
+
 	public static ApplicationResponse from(Application a) {
 		return ApplicationResponse.builder()
 			.id(a.getId())
-			.studentId(a.getStudentId())
-			.storeId(a.getStoreId())
+			.studentId(a.getStudent() != null ? a.getStudent().getId() : null)
+			.storeBusinessNumber(null) // Application에는 직접적인 Store 연관관계가 없음
 			.status(a.getStatus() != null ? a.getStatus().name() : null)
 			.title(a.getTitle())
 			.projectName(a.getProjectName())
@@ -56,6 +61,11 @@ public class ApplicationResponse {
 			.updatedAt(a.getUpdatedAt())
 			.submittedAt(a.getSubmittedAt())
 			.deletedAt(a.getDeletedAt())
+			.fileUrls(a.getFiles() != null ? 
+				a.getFiles().stream()
+					.map(file -> "/uploads/application/" + file.getSavedFileName())
+					.collect(Collectors.toList()) : 
+				List.of())
 			.build();
 	}
 }

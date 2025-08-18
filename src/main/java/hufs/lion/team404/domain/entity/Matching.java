@@ -22,12 +22,12 @@ public class Matching {
     
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "project_request_id", nullable = false)
+    @JoinColumn(name = "project_request_id")
     private ProjectRequest projectRequest;
     
     @ManyToOne
     @JoinColumn(name = "application_id")
-    private Portfolio portfolio;
+    private Application application;
     
     @ManyToOne
     @JoinColumn(name = "chat_room_id")

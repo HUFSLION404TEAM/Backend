@@ -6,14 +6,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(
-	name = "applications",
-	indexes = {
-		@Index(name = "idx_app_student_store_status", columnList = "student_id,store_id,status")
-	}
-)
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -21,25 +16,23 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class Application {
 
-	public enum Status { DRAFT, SUBMITTED, DELETED }
+    public enum Status {
+        ACTIVE, CLOSED, MATCHED
+    }
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
-	private Long studentId;
-
-	@Column(nullable = false)
-	private Long storeId;
+    @ManyToOne
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20)
 	@Builder.Default
-	private Status status = Status.DRAFT;
-
+	private Status status = Status.ACTIVE;
 
 	private String title;
-
 
 	@Column(name = "project_name")
 	private String projectName;
@@ -65,10 +58,8 @@ public class Application {
 	@Column(name = "expected_outcome", columnDefinition = "TEXT")
 	private String expectedOutcome;
 
-
 	private LocalDateTime submittedAt;
 	private LocalDateTime deletedAt;
-
 
 	@CreatedDate @Column(updatable = false)
 	private LocalDateTime createdAt;
@@ -76,11 +67,15 @@ public class Application {
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
 
+	// 첨부파일과의 연관관계
+	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ApplicationFile> files;
+
+	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL)
+	private List<Matching> matchings;
 
 	@PrePersist
 	void prePersist() {
-		if (status == null) status = Status.DRAFT;
+		if (status == null) status = Status.ACTIVE;
 	}
 }
-
-

@@ -39,9 +39,9 @@ public class MatchingResponse {
 			.createdAt(matching.getCreatedAt())
 
 			// 가게 정보
-			.businessNumber(matching.getProjectRequest().getStore().getBusinessNumber())
-			.storeName(matching.getProjectRequest().getStore().getStoreName())
-			.storeEmail(matching.getProjectRequest().getStore().getUser().getEmail())
+			.businessNumber(matching.getChatRoom().getStore().getBusinessNumber())
+			.storeName(matching.getChatRoom().getStore().getStoreName())
+			.storeEmail(matching.getChatRoom().getStore().getUser().getEmail())
 
 			// 학생 정보
 			.studentId(matching.getChatRoom() != null ? matching.getChatRoom().getStudent().getId() : null)

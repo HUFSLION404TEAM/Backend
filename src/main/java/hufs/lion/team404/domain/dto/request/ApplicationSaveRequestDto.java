@@ -1,13 +1,15 @@
 package hufs.lion.team404.domain.dto.request;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-import jakarta.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class ApplicationSaveRequestDto {
-	@NotNull private Long storeId;
+	private Long chatRoomId;  // API 입력용 (수정시는 필수 아님)
+	private String storeBusinessNumber; // 내부 처리용
 	private String title;
 	private String projectName;
 	private String outline;
@@ -18,5 +20,3 @@ public class ApplicationSaveRequestDto {
 	private String requirements;
 	private String expectedOutcome;
 }
-
-

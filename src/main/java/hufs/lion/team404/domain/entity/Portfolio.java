@@ -51,9 +51,6 @@ public class Portfolio {
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 
-	@OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
-	private List<Matching> matchings;
-
 	@OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PortfolioImage> images = new ArrayList<>();
 

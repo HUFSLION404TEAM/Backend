@@ -24,7 +24,7 @@ public class ProjectRequest {
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
+    @JoinColumn(name = "store_id", nullable = false, referencedColumnName = "business_number")
     private Store store;
     
     @Column(nullable = false)

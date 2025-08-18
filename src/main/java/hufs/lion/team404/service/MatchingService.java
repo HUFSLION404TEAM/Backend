@@ -29,10 +29,6 @@ public class MatchingService {
         return matchingRepository.findByProjectRequestId(projectRequestId);
     }
     
-    public List<Matching> findByPortfolioId(Long portfolioId) {
-        return matchingRepository.findByPortfolioId(portfolioId);
-    }
-    
     public List<Matching> findByStatus(Matching.Status status) {
         return matchingRepository.findByStatus(status);
     }
@@ -49,12 +45,12 @@ public class MatchingService {
         return matchingRepository.findByProjectRequestStoreUserIdOrderByCreatedAtDesc(storeUserId);
     }
     
-    public List<Matching> findByPortfolioStudentUserIdOrderByCreatedAtDesc(Long studentUserId) {
-        return matchingRepository.findByPortfolioStudentUserIdOrderByCreatedAtDesc(studentUserId);
-    }
-    
     public List<Matching> findByChatRoomStudentUserIdOrderByCreatedAtDesc(Long studentUserId) {
         return matchingRepository.findByChatRoomStudentUserIdOrderByCreatedAtDesc(studentUserId);
+    }
+
+    public List<Matching> findByChatRoomStoreBusinessNumberOrderByCreatedAtDesc(String businessNumber) {
+        return matchingRepository.findByChatRoomStoreBusinessNumberOrderByCreatedAtDesc(businessNumber);
     }
     
     public List<Matching> findAll() {

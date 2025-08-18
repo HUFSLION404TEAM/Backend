@@ -74,7 +74,15 @@ public enum ErrorCode {
     // 신고 에러
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "REPORT_001", "신고를 찾을 수 없습니다."),
     REPORT_ALREADY_EXISTS(HttpStatus.CONFLICT, "REPORT_002", "이미 같은 내용으로 신고했습니다."),
-    REPORT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "REPORT_003", "신고에 접근할 권한이 없습니다.")
+    REPORT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "REPORT_003", "신고에 접근할 권한이 없습니다."),
+
+    // 포트폴리오 에러
+    PORTFOLIO_NOT_FOUND(HttpStatus.NOT_FOUND, "PORTFOLIO_001", "포트폴리오를 찾을 수 없습니다."),
+    PORTFOLIO_ACCESS_DENIED(HttpStatus.FORBIDDEN, "PORTFOLIO_002", "포트폴리오에 접근할 권한이 없습니다."),
+
+    // 지원서 에러
+    APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "APPLICATION_001", "지원서를 찾을 수 없습니다."),
+    APPLICATION_ACCESS_DENIED(HttpStatus.FORBIDDEN, "APPLICATION_002", "지원서에 접근할 권한이 없습니다.")
     ;
 
     private final HttpStatus status;

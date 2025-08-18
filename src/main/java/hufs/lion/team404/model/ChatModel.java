@@ -90,9 +90,10 @@ public class ChatModel {
 
 	public boolean hasPermission(Long userId, Long roomId) {
 		try {
-			ChatRoom chatRoom = chatRoomService.findById(roomId)
-				.orElse(null);
-			
+			System.out.println("userId = " + userId);
+			System.out.println("roomId = " + roomId);
+			ChatRoom chatRoom = chatRoomService.findById(roomId).orElseThrow();
+
 			if (chatRoom == null) {
 				// 테스트를 위해 임시로 roomId 1은 허용
 				if (roomId == 1L) {
@@ -106,9 +107,13 @@ public class ChatModel {
 				return false;
 			}
 
+			System.out.println("user = " + user.getUserRole());
+			System.out.println("user = " + user.getId());
+			System.out.println("user = " + chatRoom.getStudent().getUser().getId());
+
 			// User의 역할에 따라 권한 확인
-			if (user.getUserRole() == UserRole.STUDENT && user.getStudent() != null) {
-				return Objects.equals(chatRoom.getStudent().getId(), user.getStudent().getId());
+			if (user.getUserRole() == UserRole.STUDENT) {
+				return Objects.equals(chatRoom.getStudent().getUser().getId(), user.getStudent().getId());
 			} else if (user.getUserRole() == UserRole.STORE) {
 				// 사용자의 스토어 목록에서 채팅방의 스토어와 일치하는지 확인
 				return user.getStores().stream()

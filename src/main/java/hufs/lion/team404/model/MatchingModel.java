@@ -116,8 +116,8 @@ public class MatchingModel {
 
 		// 조회 권한 확인 (매칭 관련자만 조회 가능)
 		boolean canView = false;
-		if (matching.getPortfolio() != null &&
-			matching.getPortfolio().getStudent().getUser().getId().equals(user.getId())) {
+		if (matching.getApplication() != null &&
+			matching.getApplication().getStudent().getUser().getId().equals(user.getId())) {
 			canView = true;
 		} else if (matching.getProjectRequest().getStore().getUser().getId().equals(user.getId())) {
 			canView = true;
@@ -137,10 +137,10 @@ public class MatchingModel {
 	 * 학생이 받은 매칭 목록 조회
 	 */
 	@Transactional(readOnly = true)
-	public List<MatchingResponse> getStudentMatchings(String email) {
+	public List<MatchingResponse> getStudentMatchings(Long email) {
 		log.info("Getting student matchings for email: {}", email);
 
-		User user = userService.findByEmail(email)
+		User user = userService.findById(email)
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 		// 학생 정보 확인
@@ -150,6 +150,31 @@ public class MatchingModel {
 
 		// 학생에게 온 매칭들 조회 (채팅방의 학생 ID로 조회)
 		List<Matching> matchings = matchingService.findByChatRoomStudentUserIdOrderByCreatedAtDesc(user.getId());
+
+		log.info("Found {} matchings for student: {}", matchings.size(), user.getId());
+
+		return matchings.stream()
+			.map(MatchingResponse::fromEntity)
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 * 학생이 받은 매칭 목록 조회
+	 */
+	@Transactional(readOnly = true)
+	public List<MatchingResponse> getStoreMatchings(Long id, String businessNumber) {
+		log.info("Getting student matchings for email: {}", id);
+
+		User user = userService.findById(id)
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+		// 학생 정보 확인
+		if (user.getStores() == null) {
+			throw new CustomException(ErrorCode.STORE_NOT_FOUND);
+		}
+
+		// 학생에게 온 매칭들 조회 (채팅방의 학생 ID로 조회)
+		List<Matching> matchings = matchingService.findByChatRoomStoreBusinessNumberOrderByCreatedAtDesc(businessNumber);
 
 		log.info("Found {} matchings for student: {}", matchings.size(), user.getId());
 
@@ -193,7 +218,7 @@ public class MatchingModel {
 
 		// TODO: 실제 결제 처리 로직 추가
 		// paymentService.processPayment(matching);
-		
+
 		log.info("Matching {} completed successfully. Payment should be processed.", matchingId);
 		return savedMatching.getId();
 	}

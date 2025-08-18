@@ -4,11 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class ApplicationStartRequestDto {
-	@NotNull private Long storeId;
+public class ApplicationCreateRequestDto {
+	@NotNull private Long chatRoomId;
 	private String title;
 	private String projectName;
 	private String outline;
@@ -19,6 +20,3 @@ public class ApplicationStartRequestDto {
 	private String requirements;
 	private String expectedOutcome;
 }
-
-
-
