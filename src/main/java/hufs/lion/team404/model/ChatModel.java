@@ -3,10 +3,12 @@ package hufs.lion.team404.model;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import hufs.lion.team404.domain.dto.response.ChatRoomResponse;
 import hufs.lion.team404.domain.entity.ChatMessage;
 import hufs.lion.team404.domain.entity.ChatRoom;
 import hufs.lion.team404.domain.entity.Store;
@@ -165,24 +167,32 @@ public class ChatModel {
 	}
   
 	@Transactional(readOnly = true)
-	public List<ChatRoom> getMyChatRooms(Long userId) {
+	public List<ChatRoomResponse> getMyChatRooms(Long userId) {
 		User user = userService.findById(userId)
 			.orElseThrow(() -> new UserNotFoundException("User not found"));
 		UserRole role = user.getUserRole();
+		
+		List<ChatRoom> rooms;
 		if (role == UserRole.STUDENT) {
-			return chatRoomService.findByStudentUserIdOrderByLastMessageAtDesc(userId);
+			rooms = chatRoomService.findByStudentUserIdOrderByLastMessageAtDesc(userId);
 		} else if (role == UserRole.STORE) {
-			return chatRoomService.findByStoreUserIdOrderByLastMessageAtDesc(userId);
+			rooms = chatRoomService.findByStoreUserIdOrderByLastMessageAtDesc(userId);
 		} else if (role == UserRole.ADMIN) {
-			return chatRoomService.findAll();
+			rooms = chatRoomService.findAll();
+		} else {
+			rooms = List.of();
 		}
-		return List.of();
+		
+		return rooms.stream()
+			.map(ChatRoomResponse::from)
+			.collect(Collectors.toList());
+	}
 
 	/*
 	업체가 채팅방 목록 조회
 	 */
 	@Transactional(readOnly = true)
-	public List<ChatRoom> getStoreChatRoomList(Long userId, String businessNumber) {
+	public List<ChatRoomResponse> getStoreChatRoomList(Long userId, String businessNumber) {
 
 		User user = userService.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -201,7 +211,9 @@ public class ChatModel {
 		if (rooms.isEmpty()) {
 			throw new IllegalArgumentException("채팅방을 찾을 수 없습니다.");
 		}
-		return rooms;
-
+		
+		return rooms.stream()
+			.map(ChatRoomResponse::from)
+			.collect(Collectors.toList());
 	}
 }

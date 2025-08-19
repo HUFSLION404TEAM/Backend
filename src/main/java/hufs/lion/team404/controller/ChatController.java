@@ -1,6 +1,6 @@
 package hufs.lion.team404.controller;
 
-import hufs.lion.team404.domain.entity.ChatRoom;
+import hufs.lion.team404.domain.dto.response.ChatRoomResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -63,29 +63,30 @@ public class ChatController {
 		return ApiResponse.success("채팅방을 성공적으로 생성하였습니다.");
 	}
 
-	@GetMapping({"/rooms", "/ws/chat/rooms"})
+	@GetMapping({"/student"})
 	@Operation(
 		summary = "내 채팅방 목록 조회",
-		description = "로그인한 사용자의 역할(학생/업체)에 따라 본인이 속한 채팅방 리스트를 최신순으로 반환합니다.",
+		description = "로그인한 사용자의 역할 학생에 따라 본인이 속한 채팅방 리스트를 최신순으로 반환합니다.",
 		security = @SecurityRequirement(name = "Bearer Authentication")
 	)
-	public ApiResponse<?> getMyChatRooms(@AuthenticationPrincipal UserPrincipal authentication) {
+	public ApiResponse<List<ChatRoomResponse>> getMyChatRooms(@AuthenticationPrincipal UserPrincipal authentication) {
 		Long userId = authentication.getId();
-		return ApiResponse.success(chatModel.getMyChatRooms(userId));
+		List<ChatRoomResponse> chatRooms = chatModel.getMyChatRooms(userId);
+		return ApiResponse.success("채팅방 목록을 성공적으로 조회했습니다.", chatRooms);
 	}
 
-	@GetMapping("/{businessNumber}")
+	@GetMapping("/store/{businessNumber}")
 	@Operation(
 			summary = "업체 채팅방 조회",
 			description = "업체의 채팅방 리스트를 조회합니다.",
 			security = @SecurityRequirement(name = "Bearer Authentication")
 	)
-	public ApiResponse<List<ChatRoom>> getStoreChatRoomList(
+	public ApiResponse<List<ChatRoomResponse>> getStoreChatRoomList(
 			@AuthenticationPrincipal UserPrincipal userPrincipal,
 			@PathVariable String businessNumber) {
 
 		Long userId = userPrincipal.getId();
-		List<ChatRoom> items = chatModel.getStoreChatRoomList(userId, businessNumber);
+		List<ChatRoomResponse> items = chatModel.getStoreChatRoomList(userId, businessNumber);
 		return ApiResponse.success("채팅방을 성공적으로 조회하였습니다.", items);
 	}
 
