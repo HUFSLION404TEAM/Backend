@@ -1,6 +1,5 @@
 package hufs.lion.team404.controller;
 
-import hufs.lion.team404.domain.dto.response.ChatRoomStoreListResponse;
 import hufs.lion.team404.domain.entity.ChatRoom;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
