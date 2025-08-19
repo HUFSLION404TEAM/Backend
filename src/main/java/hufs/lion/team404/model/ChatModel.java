@@ -1,6 +1,7 @@
 package hufs.lion.team404.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import hufs.lion.team404.service.StoreService;
 import hufs.lion.team404.service.StudentService;
 import hufs.lion.team404.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -159,5 +161,31 @@ public class ChatModel {
 		chatRoomService.save(chatRoom);
 
 		return savedMessage;
+	}
+
+	/*
+	업체가 채팅방 목록 조회
+	 */
+	@Transactional(readOnly = true)
+	public List<ChatRoom> getStoreChatRoomList(Long userId, String businessNumber) {
+
+		User user = userService.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+		if (user.getUserRole() != UserRole.STORE) {
+			throw new CustomException(ErrorCode.ACCESS_DENIED, "업체만 학생과 채팅방을 조회할 수 있습니다.");
+		}
+
+		Store store = storeService.findByBusinessNumber(businessNumber)
+				.orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND, "업체를 찾을 수 었습니다."));
+
+		if (!store.getUser().getId().equals(userId)) {
+			throw new CustomException(ErrorCode.ACCESS_DENIED, "해당 업체의 소유자가 아닙니다.");
+		}
+
+		List<ChatRoom> rooms = chatRoomService.findByStoreUserIdOrderByLastMessageAtDesc(userId);
+		if (rooms.isEmpty()) {
+			throw new IllegalArgumentException("채팅방을 찾을 수 없습니다.");
+		}
+		return rooms;
 	}
 }
