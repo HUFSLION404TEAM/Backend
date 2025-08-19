@@ -176,7 +176,7 @@ public class ChatModel {
 		}
 
 		Store store = storeService.findByBusinessNumber(businessNumber)
-				.orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND, "업체를 찾을 수 었습니다."));
+				.orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND, "업체를 찾을 수 없습니다."));
 
 		if (!store.getUser().getId().equals(userId)) {
 			throw new CustomException(ErrorCode.ACCESS_DENIED, "해당 업체의 소유자가 아닙니다.");
