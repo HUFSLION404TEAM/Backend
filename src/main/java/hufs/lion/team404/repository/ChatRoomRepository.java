@@ -17,4 +17,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     List<ChatRoom> findByStudentUserIdOrderByLastMessageAtDesc(Long studentUserId);
     
     List<ChatRoom> findByStoreUserIdOrStudentUserIdOrderByLastMessageAtDesc(Long storeUserId, Long studentUserId);
+
+    List<ChatRoom> findByStore_BusinessNumberOrderByLastMessageAtDesc(String businessNumber);
 }

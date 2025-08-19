@@ -182,7 +182,7 @@ public class ChatModel {
 			throw new CustomException(ErrorCode.ACCESS_DENIED, "해당 업체의 소유자가 아닙니다.");
 		}
 
-		List<ChatRoom> rooms = chatRoomService.findByStoreUserIdOrderByLastMessageAtDesc(userId);
+		List<ChatRoom> rooms = chatRoomService.findByStore_BusinessNumberOrderByLastMessageAtDesc(store.getBusinessNumber());
 		if (rooms.isEmpty()) {
 			throw new IllegalArgumentException("채팅방을 찾을 수 없습니다.");
 		}
