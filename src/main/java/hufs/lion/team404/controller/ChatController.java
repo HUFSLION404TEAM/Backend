@@ -2,6 +2,13 @@ package hufs.lion.team404.controller;
 
 import hufs.lion.team404.domain.entity.ChatRoom;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import hufs.lion.team404.domain.dto.response.ApiResponse;
@@ -54,6 +61,17 @@ public class ChatController {
 		Long userId = authentication.getId();
 		chatModel.createChatRoomWithStudent(userId, studentId, businessNumber);
 		return ApiResponse.success("채팅방을 성공적으로 생성하였습니다.");
+	}
+
+	@GetMapping({"/rooms", "/ws/chat/rooms"})
+	@Operation(
+		summary = "내 채팅방 목록 조회",
+		description = "로그인한 사용자의 역할(학생/업체)에 따라 본인이 속한 채팅방 리스트를 최신순으로 반환합니다.",
+		security = @SecurityRequirement(name = "Bearer Authentication")
+	)
+	public ApiResponse<?> getMyChatRooms(@AuthenticationPrincipal UserPrincipal authentication) {
+		Long userId = authentication.getId();
+		return ApiResponse.success(chatModel.getMyChatRooms(userId));
 	}
 
 	@GetMapping("/{businessNumber}")

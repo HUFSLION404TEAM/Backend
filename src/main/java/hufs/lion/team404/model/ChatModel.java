@@ -3,6 +3,7 @@ package hufs.lion.team404.model;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.stereotype.Service;
 
@@ -162,6 +163,20 @@ public class ChatModel {
 
 		return savedMessage;
 	}
+  
+	@Transactional(readOnly = true)
+	public List<ChatRoom> getMyChatRooms(Long userId) {
+		User user = userService.findById(userId)
+			.orElseThrow(() -> new UserNotFoundException("User not found"));
+		UserRole role = user.getUserRole();
+		if (role == UserRole.STUDENT) {
+			return chatRoomService.findByStudentUserIdOrderByLastMessageAtDesc(userId);
+		} else if (role == UserRole.STORE) {
+			return chatRoomService.findByStoreUserIdOrderByLastMessageAtDesc(userId);
+		} else if (role == UserRole.ADMIN) {
+			return chatRoomService.findAll();
+		}
+		return List.of();
 
 	/*
 	업체가 채팅방 목록 조회
@@ -187,5 +202,6 @@ public class ChatModel {
 			throw new IllegalArgumentException("채팅방을 찾을 수 없습니다.");
 		}
 		return rooms;
+
 	}
 }
