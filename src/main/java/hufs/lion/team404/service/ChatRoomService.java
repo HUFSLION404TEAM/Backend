@@ -47,6 +47,10 @@ public class ChatRoomService {
 		return chatRoomRepository.findAll();
 	}
 
+	public List<ChatRoom> findByStore_BusinessNumberOrderByLastMessageAtDesc(String storeBusinessNumber) {
+		return chatRoomRepository.findByStore_BusinessNumberOrderByLastMessageAtDesc(storeBusinessNumber);
+	}
+
 	@Transactional
 	public void deleteById(Long id) {
 		chatRoomRepository.deleteById(id);
