@@ -7,23 +7,23 @@ import lombok.Getter;
 @Getter
 @Builder
 public class StoreReadResponseDto {
-	private Long id;
-	private String storeName;
 	private String businessNumber;
+	private String storeName;
 	private String address;
 	private String contact;
 	private String category;
 	private String introduction;
+	private Double temperature;
 
 	public static StoreReadResponseDto fromEntity(Store store) {
 		return StoreReadResponseDto.builder()
-			.id(store.getId())
-			.storeName(store.getStoreName())
 			.businessNumber(store.getBusinessNumber())
+			.storeName(store.getStoreName())
 			.address(store.getAddress())
 			.contact(store.getContact())
 			.category(store.getCategory())
 			.introduction(store.getIntroduction())
+			.temperature(store.getTemperature())
 			.build();
 	}
 }

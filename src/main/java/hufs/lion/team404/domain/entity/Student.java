@@ -1,9 +1,9 @@
 package hufs.lion.team404.domain.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -48,6 +48,14 @@ public class Student {
 
 	private String phoneCall;
 
+	private Boolean isPublic; // 학생 정보 조회 공개/비공개
+
+	private Boolean isEmployment; // 구직 중 / 휴식 중
+
+	private String region; // 지역
+
+	private Double temperature = 36.5; // 기본 온도 36.5도
+
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
@@ -56,6 +64,7 @@ public class Student {
 
 	// 연관관계
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Portfolio> portfolios;
 
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
@@ -64,7 +73,7 @@ public class Student {
 	@Builder
 	public Student(User user, String introduction, Boolean isAuthenticated, String career, String birth,
 		String school,
-		String phoneCall) {
+		String phoneCall, Boolean isPublic, Boolean isEmployment, String region, Double temperature) {
 		this.user = user;
 		this.introduction = introduction;
 		this.isAuthenticated = isAuthenticated;
@@ -72,5 +81,35 @@ public class Student {
 		this.birth = birth;
 		this.school = school;
 		this.phoneCall = phoneCall;
+		this.isPublic = isPublic;
+		this.isEmployment = isEmployment;
+		this.region = region;
+		this.temperature = temperature != null ? temperature : 36.5;
+	}
+
+	/**
+	 * 리뷰 별점에 따른 온도 조정
+	 * @param rating 리뷰 별점 (0~5)
+	 */
+	public void adjustTemperature(Integer rating) {
+		if (rating == null) return;
+		
+		double adjustment = 0.0;
+		
+		if (rating >= 0 && rating < 0.5) {
+			adjustment = -1.0; // 1도 하강
+		} else if (rating >= 1 && rating < 1.5) {
+			adjustment = -0.5; // 0.5도 하강
+		} else if (rating >= 1.5 && rating < 2.5) {
+			adjustment = -0.3; // 0.3도 하강
+		} else if (rating >= 2.5 && rating < 3.5) {
+			adjustment = 0.3; // 0.3도 상승
+		} else if (rating >= 3.5 && rating < 4.5) {
+			adjustment = 0.5; // 0.5도 상승
+		} else if (rating >= 4.5) {
+			adjustment = 1.0; // 1도 상승
+		}
+		
+		this.temperature = Math.max(0.0, Math.min(99.9, this.temperature + adjustment));
 	}
 }

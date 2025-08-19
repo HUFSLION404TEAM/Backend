@@ -23,6 +23,7 @@ import hufs.lion.team404.service.StoreService;
 import hufs.lion.team404.service.StudentService;
 import hufs.lion.team404.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,45 +35,68 @@ public class ChatModel {
 	private final StoreService storeService;
 	private final StudentService studentService;
 
-	public void createChatRoom(Long user_id, Long target_id) {
-		User user = userService.findById(user_id).orElseThrow(() -> new UserNotFoundException("User not found"));
-		switch (user.getUserRole()) {
-			case STORE -> {
-				Store store = user.getStore();
-				Student student = studentService.findById(target_id)
-					.orElseThrow(() -> new StoreNotFoundException("Store not found"));
-
-				ChatRoom chatRoom = ChatRoom.builder()
-					.student(student)
-					.store(store)
-					.initiatedBy(ChatRoom.InitiatedBy.STUDENT)
-					.build();
-
-				chatRoomService.save(chatRoom);
-			}
-
-			case STUDENT -> {
-				Student student = user.getStudent();
-				Store store = storeService.findById(target_id)
-					.orElseThrow(() -> new StoreNotFoundException("Store not found"));
-
-				ChatRoom chatRoom = ChatRoom.builder()
-					.student(student)
-					.store(store)
-					.initiatedBy(ChatRoom.InitiatedBy.STUDENT)
-					.build();
-				chatRoomService.save(chatRoom);
-			}
-
+	/**
+	 * 학생이 업체와 채팅방 생성
+	 */
+	public void createChatRoomWithStore(Long userId, String businessNumber) {
+		User user = userService.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+		
+		if (user.getUserRole() != UserRole.STUDENT) {
+			throw new CustomException(ErrorCode.ACCESS_DENIED, "학생만 업체와 채팅방을 생성할 수 있습니다.");
 		}
 
+		Student student = user.getStudent();
+		if (student == null) {
+			throw new CustomException(ErrorCode.STUDENT_NOT_FOUND, "학생 정보를 찾을 수 없습니다.");
+		}
+
+		Store store = storeService.findByBusinessNumber(businessNumber)
+			.orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND, "업체를 찾을 수 없습니다."));
+
+		ChatRoom chatRoom = ChatRoom.builder()
+			.student(student)
+			.store(store)
+			.initiatedBy(ChatRoom.InitiatedBy.STUDENT)
+			.build();
+		chatRoomService.save(chatRoom);
+	}
+
+	/**
+	 * 업체가 학생과 채팅방 생성
+	 */
+	public void createChatRoomWithStudent(Long userId, Long studentId, String businessNumber) {
+		User user = userService.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+		
+		if (user.getUserRole() != UserRole.STORE) {
+			throw new CustomException(ErrorCode.ACCESS_DENIED, "업체만 학생과 채팅방을 생성할 수 있습니다.");
+		}
+
+		// 지정된 사업자번호의 업체 조회
+		Store store = storeService.findByBusinessNumber(businessNumber)
+			.orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND, "업체를 찾을 수 없습니다."));
+
+		// 해당 업체가 현재 사용자의 업체인지 확인
+		if (!store.getUser().getId().equals(userId)) {
+			throw new CustomException(ErrorCode.ACCESS_DENIED, "해당 업체의 소유자가 아닙니다.");
+		}
+
+		Student student = studentService.findById(studentId)
+			.orElseThrow(() -> new CustomException(ErrorCode.STUDENT_NOT_FOUND, "학생을 찾을 수 없습니다."));
+
+		ChatRoom chatRoom = ChatRoom.builder()
+			.student(student)
+			.store(store)
+			.initiatedBy(ChatRoom.InitiatedBy.STORE)
+			.build();
+		chatRoomService.save(chatRoom);
 	}
 
 	public boolean hasPermission(Long userId, Long roomId) {
 		try {
-			ChatRoom chatRoom = chatRoomService.findById(roomId)
-				.orElse(null);
-			
+			System.out.println("userId = " + userId);
+			System.out.println("roomId = " + roomId);
+			ChatRoom chatRoom = chatRoomService.findById(roomId).orElseThrow();
+
 			if (chatRoom == null) {
 				// 테스트를 위해 임시로 roomId 1은 허용
 				if (roomId == 1L) {
@@ -86,11 +110,17 @@ public class ChatModel {
 				return false;
 			}
 
+			System.out.println("user = " + user.getUserRole());
+			System.out.println("user = " + user.getId());
+			System.out.println("user = " + chatRoom.getStudent().getUser().getId());
+
 			// User의 역할에 따라 권한 확인
-			if (user.getUserRole() == UserRole.STUDENT && user.getStudent() != null) {
-				return Objects.equals(chatRoom.getStudent().getId(), user.getStudent().getId());
-			} else if (user.getUserRole() == UserRole.STORE && user.getStore() != null) {
-				return Objects.equals(chatRoom.getStore().getId(), user.getStore().getId());
+			if (user.getUserRole() == UserRole.STUDENT) {
+				return Objects.equals(chatRoom.getStudent().getUser().getId(), user.getStudent().getId());
+			} else if (user.getUserRole() == UserRole.STORE) {
+				// 사용자의 스토어 목록에서 채팅방의 스토어와 일치하는지 확인
+				return user.getStores().stream()
+					.anyMatch(store -> Objects.equals(store.getBusinessNumber(), chatRoom.getStore().getBusinessNumber()));
 			}
 
 			return false;
@@ -133,6 +163,7 @@ public class ChatModel {
 
 		return savedMessage;
 	}
+  
 	@Transactional(readOnly = true)
 	public List<ChatRoom> getMyChatRooms(Long userId) {
 		User user = userService.findById(userId)
@@ -146,5 +177,31 @@ public class ChatModel {
 			return chatRoomService.findAll();
 		}
 		return List.of();
+
+	/*
+	업체가 채팅방 목록 조회
+	 */
+	@Transactional(readOnly = true)
+	public List<ChatRoom> getStoreChatRoomList(Long userId, String businessNumber) {
+
+		User user = userService.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+		if (user.getUserRole() != UserRole.STORE) {
+			throw new CustomException(ErrorCode.ACCESS_DENIED, "업체만 학생과 채팅방을 조회할 수 있습니다.");
+		}
+
+		Store store = storeService.findByBusinessNumber(businessNumber)
+				.orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND, "업체를 찾을 수 없습니다."));
+
+		if (!store.getUser().getId().equals(userId)) {
+			throw new CustomException(ErrorCode.ACCESS_DENIED, "해당 업체의 소유자가 아닙니다.");
+		}
+
+		List<ChatRoom> rooms = chatRoomService.findByStore_BusinessNumberOrderByLastMessageAtDesc(store.getBusinessNumber());
+		if (rooms.isEmpty()) {
+			throw new IllegalArgumentException("채팅방을 찾을 수 없습니다.");
+		}
+		return rooms;
+
 	}
 }

@@ -1,5 +1,6 @@
 package hufs.lion.team404.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,12 +21,13 @@ public class Matching {
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "project_request_id", nullable = false)
+    @JsonIgnore
+    @JoinColumn(name = "project_request_id")
     private ProjectRequest projectRequest;
     
     @ManyToOne
     @JoinColumn(name = "application_id")
-    private Portfolio portfolio;
+    private Application application;
     
     @ManyToOne
     @JoinColumn(name = "chat_room_id")
@@ -73,5 +75,28 @@ public class Matching {
     
     public enum Status {
         PENDING, ACCEPTED, REJECTED, COMPLETED, CANCELLED
+    }
+    
+    public void accept() {
+        this.status = Status.ACCEPTED;
+        this.respondedAt = LocalDateTime.now();
+    }
+    
+    public void reject() {
+        this.status = Status.REJECTED;
+        this.respondedAt = LocalDateTime.now();
+    }
+    
+    public boolean isPending() {
+        return this.status == Status.PENDING;
+    }
+    
+    public boolean isAccepted() {
+        return this.status == Status.ACCEPTED;
+    }
+    
+    public void complete() {
+        this.status = Status.COMPLETED;
+        this.completedAt = LocalDateTime.now();
     }
 }

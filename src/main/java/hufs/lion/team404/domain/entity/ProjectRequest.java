@@ -1,6 +1,7 @@
 package hufs.lion.team404.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,20 +9,22 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "project_requests")
 @Data
 @NoArgsConstructor
 public class ProjectRequest {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
+    @JoinColumn(name = "store_id", nullable = false, referencedColumnName = "business_number")
     private Store store;
     
     @Column(nullable = false)
@@ -77,8 +80,41 @@ public class ProjectRequest {
     // 연관관계
     @OneToMany(mappedBy = "projectRequest", cascade = CascadeType.ALL)
     private List<Matching> matchings;
-    
+
+    @OneToMany(mappedBy = "projectRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("fileOrder ASC, id ASC")
+    private List<ProjectRequestFile> files = new ArrayList<>();
+
     public enum Status {
         ACTIVE, CLOSED, MATCHED
+    }
+
+    @Builder
+    public ProjectRequest(Store store, String title, String projectOverview, LocalDate startDate, LocalDate endDate, Integer estimatedDuration,
+                          String detailedTasks, String requiredSkills,
+                          Integer budget, String paymentMethod, String workLocation, String workSchedule,
+                          String preferredMajor, Integer minGrade, String requiredExperience,
+                          String additionalNotes, ProjectRequest.Status status, List<Matching> matchings, List<ProjectRequestFile> files) {
+
+        this.store = Objects.requireNonNull(store, "store must not be null");
+        this.title = title;
+        this.projectOverview = projectOverview;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.estimatedDuration = estimatedDuration;
+        this.detailedTasks = detailedTasks;
+        this.requiredSkills = requiredSkills;
+        this.budget = budget;
+        this.paymentMethod = paymentMethod;
+        this.workLocation = workLocation;
+        this.workSchedule = workSchedule;
+        this.preferredMajor = preferredMajor;
+        this.minGrade = minGrade;
+        this.requiredExperience = requiredExperience;
+        this.additionalNotes = additionalNotes;
+        this.status = status != null ? status : Status.ACTIVE;
+        this.matchings = matchings != null ? matchings : new ArrayList<>();
+        this.files = files != null ? files : new ArrayList<>();
+
     }
 }
