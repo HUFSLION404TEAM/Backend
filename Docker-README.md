@@ -20,19 +20,19 @@
 ### 1. 서버에서 전체 실행 (애플리케이션 + MySQL)
 ```bash
 # 전체 서비스 실행
-sudo docker-compose up -d
+sudo docker compose up -d
 
 # 로그 확인
-sudo docker-compose logs -f
+sudo docker compose logs -f
 
 # 서비스 중지
-sudo docker-compose down
+sudo docker compose down
 ```
 
 ### 2. 로컬 개발용 (MySQL만 실행)
 ```bash
 # MySQL만 실행
-sudo docker-compose -f docker-compose.local.yml up -d
+sudo docker compose -f docker-compose.local.yml up -d
 
 # 애플리케이션은 IDE에서 실행
 # application.yml의 datasource.url을 localhost:3306으로 설정
@@ -41,15 +41,15 @@ sudo docker-compose -f docker-compose.local.yml up -d
 ### 3. 개별 컨테이너 관리
 ```bash
 # 특정 서비스만 재시작
-sudo docker-compose restart app
-sudo docker-compose restart mysql
+sudo docker compose restart app
+sudo docker compose restart mysql
 
 # 컨테이너 상태 확인
-sudo docker-compose ps
+sudo docker compose ps
 
 # 특정 컨테이너 로그 확인
-sudo docker-compose logs app
-sudo docker-compose logs mysql
+sudo docker compose logs app
+sudo docker compose logs mysql
 ```
 
 ## 데이터베이스 연결 정보
@@ -84,14 +84,14 @@ sudo systemctl stop mysql  # 필요시 중지
 ### 컨테이너 초기화
 ```bash
 # 모든 데이터 삭제 후 재시작
-sudo docker-compose down --volumes
-sudo docker-compose up -d
+sudo docker compose down --volumes
+sudo docker compose up -d
 ```
 
 ### 데이터베이스 접속
 ```bash
 # MySQL 컨테이너에 직접 접속
-sudo docker-compose exec mysql mysql -u myappuser -p unibiz
+sudo docker compose exec mysql mysql -u myappuser -p unibiz
 ```
 
 ## CI/CD 변경사항
