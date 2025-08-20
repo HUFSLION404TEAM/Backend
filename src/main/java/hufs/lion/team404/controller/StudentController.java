@@ -1,21 +1,17 @@
 package hufs.lion.team404.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import hufs.lion.team404.domain.dto.request.StudentCreateRequestDto;
 import hufs.lion.team404.domain.dto.request.StudentSearchRequestDto;
 import hufs.lion.team404.domain.dto.response.ApiResponse;
 import hufs.lion.team404.domain.dto.response.PageResponse;
 import hufs.lion.team404.domain.dto.response.StudentMyPageResponse;
+import hufs.lion.team404.domain.dto.response.StudentProfileResponse;
 import hufs.lion.team404.domain.dto.response.StudentResponse;
 import hufs.lion.team404.model.StudentModel;
+import hufs.lion.team404.model.StudentProfileModel;
 import hufs.lion.team404.oauth.jwt.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "학생", description = "학생 관련 API")
 public class StudentController {
 	private final StudentModel studentModel;
+	private final StudentProfileModel studentProfileModel;
 
 	@PostMapping("/create")
 	@Operation(
@@ -75,6 +72,19 @@ public class StudentController {
 		Long userId = authentication.getId();
 		StudentMyPageResponse myPageData = studentModel.getMyPage(userId);
 		return ApiResponse.success("마이페이지 정보를 성공적으로 조회했습니다.", myPageData);
+	}
+
+	@GetMapping("/profile/{studentId}")
+	@Operation(
+		summary = "학생 프로필 조회 (가게용)",
+		description = "가게에서 학생의 상세 프로필을 조회합니다. 이름, 대학교, 전공, 경력, 자기소개, 보유 역량, 포트폴리오, 온도, 매칭후기를 포함합니다.",
+		security = @SecurityRequirement(name = "Bearer Authentication")
+	)
+	public ApiResponse<StudentProfileResponse> getStudentProfile(
+		@org.springframework.web.bind.annotation.PathVariable Long studentId) {
+		
+		StudentProfileResponse profile = studentProfileModel.getStudentProfile(studentId);
+		return ApiResponse.success("학생 프로필을 성공적으로 조회했습니다.", profile);
 	}
 
 }

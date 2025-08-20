@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PutMapping;
 import hufs.lion.team404.domain.dto.request.StoreUpdateRequestDto;
 import hufs.lion.team404.domain.dto.response.StoreMyPageResponse;
+import hufs.lion.team404.domain.dto.response.StoreProfileResponse;
 import hufs.lion.team404.domain.dto.response.StoreReadResponseDto;
 import hufs.lion.team404.domain.dto.request.StoreCreateRequestDto;
 import hufs.lion.team404.domain.dto.response.ApiResponse;
 import hufs.lion.team404.model.StoreModel;
+import hufs.lion.team404.model.StoreProfileModel;
 import hufs.lion.team404.oauth.jwt.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 
 public class StoreController {
 	private final StoreModel storeModel;
+	private final StoreProfileModel storeProfileModel;
 
 	@PostMapping("/create")
 	@Operation(
@@ -114,6 +117,19 @@ public class StoreController {
 		@RequestParam String businessNumber
 	) {
 		return ApiResponse.success(storeModel.getStoreDetail(businessNumber));
+	}
+
+	@GetMapping("/profile/{businessNumber}")
+	@Operation(
+		summary = "가게 프로필 조회 (학생용)",
+		description = "학생에서 가게의 상세 프로필을 조회합니다. 업체명, 대표자명, 업종, 업체주소, 공고들, 매칭후기, 온도를 포함합니다.",
+		security = @SecurityRequirement(name = "Bearer Authentication")
+	)
+	public ApiResponse<StoreProfileResponse> getStoreProfile(
+		@PathVariable String businessNumber) {
+		
+		StoreProfileResponse profile = storeProfileModel.getStoreProfile(businessNumber);
+		return ApiResponse.success("가게 프로필을 성공적으로 조회했습니다.", profile);
 	}
 
 

@@ -27,4 +27,11 @@ public class RecruitingService {
 	public List<Recruiting> findAll() {
 		return recruitingRepository.findAll();
 	}
+	
+	/**
+	 * 특정 업체의 공고 목록 조회 (최신순)
+	 */
+	public List<Recruiting> findByStoreOrderByCreatedAtDesc(hufs.lion.team404.domain.entity.Store store) {
+		return recruitingRepository.findByStoreOrderByCreatedAtDesc(store);
+	}
 }

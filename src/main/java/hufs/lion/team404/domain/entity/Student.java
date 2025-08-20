@@ -44,6 +44,10 @@ public class Student {
 
 	private String school;
 
+	private String major; // 전공
+
+	private String capabilities; // 보유 역량
+
 	private String birth;
 
 	private String phoneCall;
@@ -72,7 +76,7 @@ public class Student {
 
 	@Builder
 	public Student(User user, String introduction, Boolean isAuthenticated, String career, String birth,
-		String school,
+		String school, String major, String capabilities,
 		String phoneCall, Boolean isPublic, Boolean isEmployment, String region, Double temperature) {
 		this.user = user;
 		this.introduction = introduction;
@@ -80,6 +84,8 @@ public class Student {
 		this.career = career;
 		this.birth = birth;
 		this.school = school;
+		this.major = major;
+		this.capabilities = capabilities;
 		this.phoneCall = phoneCall;
 		this.isPublic = isPublic;
 		this.isEmployment = isEmployment;

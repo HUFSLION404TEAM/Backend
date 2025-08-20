@@ -38,6 +38,8 @@ public class Portfolio {
 	@Column(nullable = false)
 	private String title;
 
+	private String projectName; // 프로젝트명
+	private String outline; // 개요
 	private String progressPeriod;
 	private boolean prize;
 	private String workDoneProgress;
@@ -55,11 +57,14 @@ public class Portfolio {
 	private List<PortfolioImage> images = new ArrayList<>();
 
 	@Builder
-	public Portfolio(Student student, String title, String progressPeriod, boolean prize, String workDoneProgress, String result, String felt, boolean isPrivate,
+	public Portfolio(Student student, String title, String projectName, String outline, String progressPeriod, 
+					boolean prize, String workDoneProgress, String result, String felt, boolean isPrivate,
 					 LocalDateTime createdAt, LocalDateTime updatedAt) {
 
 		this.student = student;
 		this.title = title;
+		this.projectName = projectName;
+		this.outline = outline;
 		this.progressPeriod = progressPeriod;
 		this.prize = prize;
 		this.workDoneProgress = workDoneProgress;

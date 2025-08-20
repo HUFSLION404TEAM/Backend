@@ -8,8 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,14 +34,23 @@ public class ReviewService {
     }
     
     public List<Review> findByRevieweeOrderByCreatedAtDesc(User reviewee) {
-        // 동적으로 리뷰 대상자가 해당 유저인 리뷰들을 찾아야 함
+        if (reviewee == null) {
+            return new ArrayList<>();
+        }
+        
+        // 동적으로 리뷰 대상자가 해당 유저인 리뷰들을 찾기
         return reviewRepository.findAll().stream()
                 .filter(review -> {
-                    User targetReviewee = review.getReviewee();
-                    return targetReviewee != null && targetReviewee.getId().equals(reviewee.getId());
+                    try {
+                        User targetReviewee = review.getReviewee();
+                        return targetReviewee != null && targetReviewee.getId().equals(reviewee.getId());
+                    } catch (Exception e) {
+                        // 순환 참조나 기타 오류 발생 시 false 반환
+                        return false;
+                    }
                 })
                 .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.toList());
     }
     
     public boolean existsByMatchingAndReviewer(Matching matching, User reviewer) {

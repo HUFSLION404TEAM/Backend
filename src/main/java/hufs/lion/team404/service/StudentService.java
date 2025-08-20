@@ -42,6 +42,14 @@ public class StudentService {
         return studentRepository.findByUserId(userId);
     }
     
+    /**
+     * 공개된 학생 프로필 조회 (가게에서 볼 수 있는)
+     */
+    public Optional<Student> findPublicProfileById(Long studentId) {
+        return studentRepository.findById(studentId)
+                .filter(student -> Boolean.TRUE.equals(student.getIsPublic()));
+    }
+    
     public List<Student> findByIsAuthenticated(Boolean isAuthenticated) {
         return studentRepository.findByIsAuthenticated(isAuthenticated);
     }

@@ -2,8 +2,11 @@ package hufs.lion.team404.domain.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,6 +46,12 @@ public class Recruiting {
 
 	@OneToMany(mappedBy = "recruiting", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<RecruitingImage> images = new ArrayList<>();
+
+	@CreationTimestamp
+	private LocalDateTime createdAt;
+
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
 
 	@Builder
 	public Recruiting(String title, String recruitmentPeriod, String progressPeriod, String projectOutline,
