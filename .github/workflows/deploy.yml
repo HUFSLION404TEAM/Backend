@@ -57,24 +57,45 @@ jobs:
       - name: checkout repository
         uses: actions/checkout@v3
 
+      - name: stop existing nginx service
+        run: |
+          sudo systemctl stop nginx || echo "nginx already stopped"
+          sudo systemctl disable nginx || echo "nginx already disabled"
+
       - name: docker pull
         run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/unibiz
 
       - name: stop existing containers
         run: |
-          if [ $(sudo docker ps -aq -f name=unibiz-app) ]; then
-            sudo docker stop unibiz-app
-            sudo docker rm unibiz-app
-          fi
-          if [ $(sudo docker ps -aq -f name=unibiz-mysql) ]; then
-            sudo docker stop unibiz-mysql
-            sudo docker rm unibiz-mysql
-          fi
-
-      - name: run docker-compose
-        run: |
           sudo docker compose down --volumes || true
+
+      - name: create ssl directory
+        run: |
+          mkdir -p ssl
+          sudo chmod 755 ssl
+
+      - name: run docker-compose with nginx and ssl
+        run: |
+          sudo docker compose up -d mysql app nginx
+
+      - name: wait for services to start
+        run: sleep 30
+
+      - name: setup ssl certificate
+        run: |
+          sudo docker compose run --rm --entrypoint="" certbot sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot --email ${{ secrets.SSL_EMAIL }} --agree-tos --no-eff-email -d unibiz.lion.it.kr || echo 'SSL setup failed, continuing...'"
+
+      - name: restart services with ssl
+        run: |
+          sudo docker compose down
           sudo docker compose up -d
 
       - name: delete old docker images
         run: sudo docker system prune -f
+
+      - name: verify deployment
+        run: |
+          echo "=== Deployment Status ==="
+          sudo docker compose ps
+          echo "=== Service Logs ==="
+          sudo docker compose logs --tail=50
