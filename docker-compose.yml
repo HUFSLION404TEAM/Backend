@@ -39,5 +39,5 @@ volumes:
 
 networks:
   unibiz-network:
-    external: true
     name: unibiz-network
+    driver: bridge
