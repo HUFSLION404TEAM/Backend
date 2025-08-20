@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: unibiz-mysql-local
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: unibiz
+      MYSQL_USER: myappuser
+      MYSQL_PASSWORD: MyApp#1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_local_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - unibiz-network
+
+volumes:
+  mysql_local_data:
+
+networks:
+  unibiz-network:
+    driver: bridge

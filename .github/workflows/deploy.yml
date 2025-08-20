@@ -49,22 +49,32 @@ jobs:
       - name: docker Hub push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/unibiz
 
-  run-docker-image-on-ec2:
+  deploy-with-docker-compose:
     needs: build-docker-image
     runs-on: self-hosted
 
     steps:
+      - name: checkout repository
+        uses: actions/checkout@v3
+
       - name: docker pull
         run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/unibiz
 
-      - name: docker stop container
+      - name: stop existing containers
         run: |
-          if [ $(sudo docker ps -q -f name=unibiz) ]; then
-            sudo docker stop unibiz
+          if [ $(sudo docker ps -aq -f name=unibiz-app) ]; then
+            sudo docker stop unibiz-app
+            sudo docker rm unibiz-app
+          fi
+          if [ $(sudo docker ps -aq -f name=unibiz-mysql) ]; then
+            sudo docker stop unibiz-mysql
+            sudo docker rm unibiz-mysql
           fi
 
-      - name: docker run new container
-        run: sudo docker run --name unibiz --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/unibiz
+      - name: run docker-compose
+        run: |
+          sudo docker-compose down --volumes || true
+          sudo docker-compose up -d
 
-      - name: delete old docker image
+      - name: delete old docker images
         run: sudo docker system prune -f
