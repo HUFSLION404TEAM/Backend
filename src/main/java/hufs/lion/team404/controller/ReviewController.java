@@ -20,7 +20,6 @@ import java.util.List;
 @RequestMapping("/api/review")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 @Tag(name = "리뷰", description = "리뷰 작성 및 조회 관련 API")
 public class ReviewController {
     

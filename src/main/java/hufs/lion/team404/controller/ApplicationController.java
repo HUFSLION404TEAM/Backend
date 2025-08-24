@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
+
 @Tag(name = "지원서", description = "학생 지원 관련 API")
 @RequestMapping("/api/application")
 public class ApplicationController {

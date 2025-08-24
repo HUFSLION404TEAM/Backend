@@ -193,7 +193,7 @@ public class ChatModel {
 	 */
 	@Transactional(readOnly = true)
 	public List<ChatRoomResponse> getStoreChatRoomList(Long userId, String businessNumber) {
-
+		System.out.println("userId = " + userId);
 		User user = userService.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
 		if (user.getUserRole() != UserRole.STORE) {

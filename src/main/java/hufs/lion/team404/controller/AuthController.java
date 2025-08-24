@@ -26,7 +26,6 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 @Tag(name = "인증", description = "사용자 인증 관련 API")
 public class AuthController {
 

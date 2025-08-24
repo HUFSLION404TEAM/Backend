@@ -21,7 +21,6 @@ import java.util.List;
 @RequestMapping("/api/report")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 @Tag(name = "신고", description = "신고 작성 및 관리 관련 API")
 public class ReportController {
     

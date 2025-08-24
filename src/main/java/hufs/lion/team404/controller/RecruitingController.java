@@ -35,7 +35,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/recruit")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
+
 @Tag(name = "구인", description = "구인 관련 API")
 public class RecruitingController {
 	private final RecruitingModel recruitingModel;

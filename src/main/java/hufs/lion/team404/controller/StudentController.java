@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/student")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
+
 @Tag(name = "학생", description = "학생 관련 API")
 public class StudentController {
 	private final StudentModel studentModel;

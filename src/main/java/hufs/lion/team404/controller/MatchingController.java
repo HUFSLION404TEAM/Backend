@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/matching")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
+
 @Tag(name = "매칭", description = "매칭 수락/거절 관련 API")
 public class MatchingController {
 

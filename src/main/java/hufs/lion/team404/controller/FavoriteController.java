@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/favorites")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 @Tag(name = "찜하기", description = "찜하기 관련 API")
 public class FavoriteController {
 

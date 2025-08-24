@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/portfolio")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
+
 @Tag(name = "포트폴리오", description = "포트폴리오 관련 API")
 public class PortfolioController {
 	private final PortfolioModel portfolioModel;

@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 @RequestMapping("/api/store")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
+
 @Tag(name = "업체", description = "업체 관련 API")
 
 public class StoreController {

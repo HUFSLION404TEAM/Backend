@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/projectRequest")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
+
 @Tag(name = "의뢰서 제안", description = "의뢰서 제안 관련 API")
 public class ProjectRequestController {
 

@@ -26,7 +26,7 @@ import java.util.List;
 @RequestMapping("/api/chat")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
+
 @Tag(name = "채팅", description = "채팅 관련 API")
 public class ChatController {
 
@@ -86,6 +86,7 @@ public class ChatController {
 			@PathVariable String businessNumber) {
 
 		Long userId = userPrincipal.getId();
+		System.out.println("userPrincipal = " + userPrincipal.getId());
 		List<ChatRoomResponse> items = chatModel.getStoreChatRoomList(userId, businessNumber);
 		return ApiResponse.success("채팅방을 성공적으로 조회하였습니다.", items);
 	}

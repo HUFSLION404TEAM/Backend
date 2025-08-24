@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "시스템", description = "시스템 상태 확인 API")
-@CrossOrigin(origins = "*")
 public class HomeController {
     
     @GetMapping("/health")
