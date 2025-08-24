@@ -6,6 +6,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
 
 import hufs.lion.team404.oauth.OAuth2AuthenticationSuccessHandler;
 import hufs.lion.team404.oauth.jwt.JwtAuthenticationFilter;
@@ -27,6 +31,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
+			.cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
 			.csrf(csrf -> csrf.disable()) // 개발 단계에서는 비활성화
 			.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 				// 공개 엔드포인트 - 인증 불필요
@@ -41,10 +46,8 @@ public class SecurityConfig {
 				// H2 콘솔 (개발환경)
 				.requestMatchers("/h2-console/**").permitAll()
 				
-				// API 엔드포인트 - 인증 필요
-				.requestMatchers("/api/student/**", "/api/store/**").authenticated()
-				.requestMatchers("/api/chat/**").authenticated()
-				.requestMatchers("/api/**").authenticated()
+				// API 엔드포인트 - 개발 단계에서는 일시적으로 허용
+				.requestMatchers("/api/**").permitAll()
 				
 				// 나머지는 permitAll로 변경 (개발 단계)
 				.anyRequest().permitAll()
@@ -64,5 +67,19 @@ public class SecurityConfig {
 			)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOriginPatterns(Arrays.asList("*")); // 모든 도메인 허용 (개발 단계)
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+		configuration.setAllowedHeaders(Arrays.asList("*"));
+		configuration.setAllowCredentials(true);
+		configuration.setMaxAge(3600L);
+		
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
 	}
 }
