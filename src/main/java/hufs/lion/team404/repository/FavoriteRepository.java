@@ -18,11 +18,17 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     
     Optional<Favorite> findByUserIdAndTargetProjectRequestId(Long userId, Long targetProjectRequestId);
     
+    Optional<Favorite> findByUserIdAndTargetStoreBusinessNumber(Long userId, String targetStoreBusinessNumber);
+    
     boolean existsByUserIdAndTargetStudentId(Long userId, Long targetStudentId);
     
     boolean existsByUserIdAndTargetProjectRequestId(Long userId, Long targetProjectRequestId);
     
+    boolean existsByUserIdAndTargetStoreBusinessNumber(Long userId, String targetStoreBusinessNumber);
+    
     long countByTargetStudentId(Long targetStudentId);
     
     long countByTargetProjectRequestId(Long targetProjectRequestId);
+    
+    long countByTargetStoreBusinessNumber(String targetStoreBusinessNumber);
 }

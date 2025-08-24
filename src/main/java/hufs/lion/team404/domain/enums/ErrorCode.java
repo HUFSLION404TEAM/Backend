@@ -17,6 +17,7 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "COMMON_003", "허용되지 않은 HTTP 메서드입니다."),
     INVALID_TYPE_VALUE(HttpStatus.BAD_REQUEST, "COMMON_004", "잘못된 타입의 값입니다."),
     HANDLE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "COMMON_005", "접근이 거부되었습니다."),
+    INVALID_REQUEST(HttpStatus.BAD_REQUEST, "COMMON_006", "잘못된 요청입니다."),
 
     // 인증/인가 에러
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH_001", "인증이 필요합니다."),

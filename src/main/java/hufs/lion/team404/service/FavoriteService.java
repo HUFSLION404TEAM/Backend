@@ -41,6 +41,10 @@ public class FavoriteService {
         return favoriteRepository.findByUserIdAndTargetProjectRequestId(userId, targetProjectRequestId);
     }
     
+    public Optional<Favorite> findByUserIdAndTargetStoreBusinessNumber(Long userId, String targetStoreBusinessNumber) {
+        return favoriteRepository.findByUserIdAndTargetStoreBusinessNumber(userId, targetStoreBusinessNumber);
+    }
+    
     public boolean existsByUserIdAndTargetStudentId(Long userId, Long targetStudentId) {
         return favoriteRepository.existsByUserIdAndTargetStudentId(userId, targetStudentId);
     }
@@ -49,12 +53,20 @@ public class FavoriteService {
         return favoriteRepository.existsByUserIdAndTargetProjectRequestId(userId, targetProjectRequestId);
     }
     
+    public boolean existsByUserIdAndTargetStoreBusinessNumber(Long userId, String targetStoreBusinessNumber) {
+        return favoriteRepository.existsByUserIdAndTargetStoreBusinessNumber(userId, targetStoreBusinessNumber);
+    }
+    
     public long countByTargetStudentId(Long targetStudentId) {
         return favoriteRepository.countByTargetStudentId(targetStudentId);
     }
     
     public long countByTargetProjectRequestId(Long targetProjectRequestId) {
         return favoriteRepository.countByTargetProjectRequestId(targetProjectRequestId);
+    }
+    
+    public long countByTargetStoreBusinessNumber(String targetStoreBusinessNumber) {
+        return favoriteRepository.countByTargetStoreBusinessNumber(targetStoreBusinessNumber);
     }
     
     public List<Favorite> findAll() {

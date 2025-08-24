@@ -30,6 +30,10 @@ public class Favorite {
     @JoinColumn(name = "target_project_request_id")
     private ProjectRequest targetProjectRequest;
     
+    @ManyToOne
+    @JoinColumn(name = "target_store_business_number")
+    private Store targetStore;
+    
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FavoriteType favoriteType;
@@ -47,6 +51,6 @@ public class Favorite {
     private LocalDateTime updatedAt;
     
     public enum FavoriteType {
-        STUDENT, PROJECT_REQUEST
+        STUDENT, PROJECT_REQUEST, STORE
     }
 }
