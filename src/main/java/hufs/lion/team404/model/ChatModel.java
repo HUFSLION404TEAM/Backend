@@ -195,7 +195,7 @@ public class ChatModel {
 	public List<ChatRoomResponse> getStoreChatRoomList(Long userId, String businessNumber) {
 		System.out.println("userId = " + userId);
 		User user = userService.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
-
+		System.out.println("user = " + user.getUserRole());
 		if (user.getUserRole() != UserRole.STORE) {
 			throw new CustomException(ErrorCode.ACCESS_DENIED, "업체만 학생과 채팅방을 조회할 수 있습니다.");
 		}

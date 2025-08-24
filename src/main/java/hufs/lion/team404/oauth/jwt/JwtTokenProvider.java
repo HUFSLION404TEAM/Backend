@@ -50,10 +50,13 @@ public class JwtTokenProvider {
     
     // Access Token 생성
     public String createAccessToken(Long userId, String email, UserRole role) {
+        System.out.println("=== JWT AccessToken 생성 시작 ===");
+        System.out.println("입력값 - userId: " + userId + ", email: " + email + ", role: " + role);
+        
         Date now = new Date();
         Date expiry = new Date(now.getTime() + accessTokenExpireTime);
         
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .subject(userId.toString())
                 .claim("email", email)
                 .claim("role", role.name())
@@ -62,13 +65,17 @@ public class JwtTokenProvider {
                 .expiration(expiry)
                 .signWith(key, Jwts.SIG.HS512)
                 .compact();
+        
+        System.out.println("생성된 토큰 subject(userId): " + userId.toString());
+        System.out.println("=== JWT AccessToken 생성 완료 ===");
+        
+        return token;
     }
     
     // Refresh Token 생성
     public String createRefreshToken(Long userId) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + refreshTokenExpireTime);
-        
         return Jwts.builder()
                 .subject(userId.toString())
                 .claim("type", "REFRESH")
@@ -80,18 +87,28 @@ public class JwtTokenProvider {
     
     // 토큰에서 사용자 정보 추출
     public Authentication getAuthentication(String token) {
+        System.out.println("=== JWT 토큰 파싱 시작 ===");
         Claims claims = parseClaims(token);
         
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(new String[]{claims.get("role").toString()})
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
-
+        
+        System.out.println("파싱된 claims = " + claims);
+        System.out.println("파싱된 userId = " + claims.getSubject());
+        System.out.println("파싱된 email = " + claims.get("email"));
+        System.out.println("파싱된 role = " + claims.get("role"));
+        System.out.println("생성된 authorities = " + authorities);
+        
         UserPrincipal principal = UserPrincipal.builder()
                 .id(Long.parseLong(claims.getSubject()))
                 .email(claims.get("email").toString())
                 .authorities(authorities)
                 .build();
+        
+        System.out.println("생성된 UserPrincipal - ID: " + principal.getId() + ", Email: " + principal.getEmail());
+        System.out.println("=== JWT 토큰 파싱 완료 ===");
         
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }

@@ -87,6 +87,7 @@ public class ChatController {
 
 		Long userId = userPrincipal.getId();
 		System.out.println("userPrincipal = " + userPrincipal.getId());
+		System.out.println("userPrincipal = " + userPrincipal.getEmail());
 		List<ChatRoomResponse> items = chatModel.getStoreChatRoomList(userId, businessNumber);
 		return ApiResponse.success("채팅방을 성공적으로 조회하였습니다.", items);
 	}

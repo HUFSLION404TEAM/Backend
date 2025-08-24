@@ -33,6 +33,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException {
         
+        System.out.println("=== OAuth2 인증 성공 핸들러 시작 ===");
+        
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
         
         System.out.println("oauth2User attributes = " + oauth2User.getAttributes());
@@ -50,12 +52,22 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         String email = attributes.getEmail();
         System.out.println("추출된 이메일: " + email);
         
+        // 데이터베이스에서 사용자 조회
+        System.out.println("데이터베이스에서 사용자 조회 중...");
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> {
+                    System.out.println("사용자를 찾을 수 없습니다: " + email);
+                    return new IllegalStateException("사용자를 찾을 수 없습니다.");
+                });
+        
+        System.out.println("조회된 사용자 - ID: " + user.getId() + ", Email: " + user.getEmail() + ", Role: " + user.getUserRole());
         
         // JWT 토큰 생성
+        System.out.println("토큰 생성 - userId: " + user.getId() + ", email: " + user.getEmail() + ", role: " + user.getUserRole());
         String accessToken = jwtTokenProvider.createAccessToken(user.getId(), user.getEmail(), user.getUserRole());
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getId());
+        
+        System.out.println("생성된 AccessToken: " + accessToken.substring(0, Math.min(50, accessToken.length())) + "...");
         
         // TEMP 사용자인 경우와 일반 사용자인 경우 구분
         if (user.getUserRole() == UserRole.TEMP) {
@@ -67,6 +79,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                     .queryParam("userId", user.getId())
                     .build().toUriString();
             
+            System.out.println("TEMP 사용자 - 리다이렉트 URL: " + targetUrl);
             response.sendRedirect(targetUrl);
         } else {
             // 완전한 사용자인 경우
@@ -76,9 +89,11 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                     .queryParam("needsTypeSelection", "false")
                     .build().toUriString();
             
+            System.out.println("일반 사용자 - 리다이렉트 URL: " + targetUrl);
             response.sendRedirect(targetUrl);
         }
         
+        System.out.println("=== OAuth2 인증 성공 핸들러 완료 ===");
         log.info("OAuth2 인증 성공. 사용자: {}, 역할: {}", user.getEmail(), user.getUserRole());
     }
     
