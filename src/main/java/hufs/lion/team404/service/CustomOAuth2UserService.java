@@ -31,7 +31,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
 		System.out.println("=== OAuth2 로그인 시작 ===");
-		
+
 		OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
 		OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
@@ -49,7 +49,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		// OAuth2UserService를 통해 가져온 OAuthUser의 attribute를 담을 클래스 ( 네이버 등 다른 소셜 로그인도 이 클래스 사용)
 		OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName,
 			oAuth2User.getAttributes());
-		
+
 		System.out.println("파싱된 attributes - name: " + attributes.getName() + ", email: " + attributes.getEmail());
 
 		User userEntity = saveOrUpdate(attributes);
@@ -70,8 +70,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 		// 이메일을 기준으로 사용자를 찾아 업데이트하거나, 사용자를 새로 생성합니다.
 		System.out.println("saveOrUpdate - 조회할 이메일: " + attributes.getEmail());
-		
-		User userEntity = userRepository.findByEmail(attributes.getEmail())
+
+		User userEntity = userRepository.findBySocialProviderAndSocialId(attributes.getSocialProvider(),
+				attributes.getSocialId())
 			.map(entity -> {
 				System.out.println("기존 사용자 발견 - ID: " + entity.getId() + ", Email: " + entity.getEmail());
 				return entity.update(attributes.getName(), attributes.getProfileImage());
@@ -83,7 +84,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 		User savedUser = userRepository.save(userEntity);
 		System.out.println("저장된 사용자 - ID: " + savedUser.getId() + ", Email: " + savedUser.getEmail());
-		
+
 		return savedUser;
 	}
 }
