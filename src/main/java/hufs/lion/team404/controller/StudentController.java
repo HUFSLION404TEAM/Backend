@@ -1,7 +1,12 @@
 package hufs.lion.team404.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import hufs.lion.team404.domain.dto.request.StudentCreateRequestDto;
 import hufs.lion.team404.domain.dto.request.StudentSearchRequestDto;
@@ -36,14 +41,14 @@ public class StudentController {
 		description = "새로운 학생 정보를 생성합니다.",
 		security = @SecurityRequirement(name = "Bearer Authentication")
 	)
-	public ApiResponse<Void> createStudent(
+	public ApiResponse<String> createStudent(
 		@AuthenticationPrincipal UserPrincipal authentication,
 		@Valid @RequestBody StudentCreateRequestDto studentCreateRequestDto) {
 
 		Long userId = authentication.getId();
-		studentModel.createStudent(studentCreateRequestDto, userId);
+		String student = studentModel.createStudent(studentCreateRequestDto, userId);
 
-		return ApiResponse.success("학생 정보가 성공적으로 생성되었습니다.");
+		return ApiResponse.success("$학생 정보가 성공적으로 생성되었습니다.", student);
 	}
 
 	@PostMapping("/search")
@@ -82,7 +87,7 @@ public class StudentController {
 	)
 	public ApiResponse<StudentProfileResponse> getStudentProfile(
 		@org.springframework.web.bind.annotation.PathVariable Long studentId) {
-		
+
 		StudentProfileResponse profile = studentProfileModel.getStudentProfile(studentId);
 		return ApiResponse.success("학생 프로필을 성공적으로 조회했습니다.", profile);
 	}

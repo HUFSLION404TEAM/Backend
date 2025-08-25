@@ -33,7 +33,7 @@ public class StudentModel {
 	private final UserService userService;
 	private final MatchingService matchingService;
 
-	public void createStudent(StudentCreateRequestDto studentCreateRequestDto, Long user_id) {
+	public String createStudent(StudentCreateRequestDto studentCreateRequestDto, Long user_id) {
 		User user = userService.findById(user_id).orElseThrow(() -> new NotFoundException("User not found"));
 
 		if (user.getStudent() != null) {
@@ -54,7 +54,8 @@ public class StudentModel {
 			.build();
 
 		user.setUserRole(UserRole.STUDENT);
-		studentService.save(student);
+		Student save = studentService.save(student);
+		return user.getName();
 	}
 
 	// 학생 정보 검색

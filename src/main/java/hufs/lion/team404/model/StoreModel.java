@@ -29,7 +29,7 @@ public class StoreModel {
 	private final UserService userService;
 	private final MatchingService matchingService;
 
-	public void createStore(StoreCreateRequestDto storeCreateRequestDto, Long user_id) {
+	public String createStore(StoreCreateRequestDto storeCreateRequestDto, Long user_id) {
 		User user = userService.findById(user_id).orElseThrow(() -> new NotFoundException("User not found"));
 
 		// 이미 같은 사업자번호로 등록된 업체가 있는지 확인
@@ -50,6 +50,7 @@ public class StoreModel {
 		user.setUserRole(UserRole.STORE);
 
 		storeService.save(store);
+		return storeCreateRequestDto.getName();
 	}
 
 	public StoreReadResponseDto getStoreByBusinessNumber(String businessNumber) {

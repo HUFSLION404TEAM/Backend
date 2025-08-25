@@ -47,14 +47,14 @@ public class StoreController {
 		description = "새로운 업체 정보를 생성합니다.",
 		security = @SecurityRequirement(name = "Bearer Authentication")
 	)
-	public ApiResponse<Void> createStore(
+	public ApiResponse<String> createStore(
 		@AuthenticationPrincipal UserPrincipal authentication,
 		@Valid @RequestBody StoreCreateRequestDto storeCreateRequestDto) {
 
 		Long userId = authentication.getId();
-		storeModel.createStore(storeCreateRequestDto, userId);
+		String store = storeModel.createStore(storeCreateRequestDto, userId);
 
-		return ApiResponse.success("업체 정보가 성공적으로 생성되었습니다.");
+		return ApiResponse.success("업체 정보가 성공적으로 생성되었습니다.", store);
 	}
 	@GetMapping
 	@Operation(summary = "업체 목록 조회", description = "모든 업체 정보를 조회합니다.")
