@@ -40,6 +40,13 @@ public class PortfolioService {
 		return portfolioRepository.findByStudentAndIsPrivateFalseOrderByCreatedAtDesc(student);
 	}
 
+	/**
+	 * 특정 학생의 공개 포트폴리오 수 조회
+	 */
+	public Long countByStudentAndIsPrivateFalse(Student student) {
+		return portfolioRepository.countByStudentAndIsPrivateFalse(student);
+	}
+
 	// 수정 추가
 	@Transactional
 	public void update(Long portfolioId, String title, String progressPeriod, Boolean prize, String workDoneProgress,

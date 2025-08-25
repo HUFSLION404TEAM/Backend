@@ -1,5 +1,7 @@
 package hufs.lion.team404.controller;
 
+import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +15,7 @@ import hufs.lion.team404.domain.dto.request.StudentSearchRequestDto;
 import hufs.lion.team404.domain.dto.response.ApiResponse;
 import hufs.lion.team404.domain.dto.response.PageResponse;
 import hufs.lion.team404.domain.dto.response.StudentMyPageResponse;
+import hufs.lion.team404.domain.dto.response.StudentProfileListResponse;
 import hufs.lion.team404.domain.dto.response.StudentProfileResponse;
 import hufs.lion.team404.domain.dto.response.StudentResponse;
 import hufs.lion.team404.model.StudentModel;
@@ -77,6 +80,25 @@ public class StudentController {
 		Long userId = authentication.getId();
 		StudentMyPageResponse myPageData = studentModel.getMyPage(userId);
 		return ApiResponse.success("마이페이지 정보를 성공적으로 조회했습니다.", myPageData);
+	}
+
+	@GetMapping("/profiles")
+	@Operation(
+		summary = "전체 학생 프로필 목록 조회",
+		description = "모든 공개 학생 프로필을 조회합니다. 필터링 옵션을 제공합니다."
+	)
+	public ApiResponse<List<StudentProfileListResponse>> getAllStudentProfiles(
+		@RequestParam(value = "school", required = false) String school,
+		@RequestParam(value = "major", required = false) String major,
+		@RequestParam(value = "region", required = false) String region,
+		@RequestParam(value = "isEmployment", required = false) Boolean isEmployment,
+		@RequestParam(value = "keyword", required = false) String keyword,
+		@RequestParam(value = "minTemperature", required = false) Double minTemperature,
+		@RequestParam(value = "maxTemperature", required = false) Double maxTemperature
+	) {
+		List<StudentProfileListResponse> profiles = studentProfileModel.getAllStudentProfiles(
+			school, major, region, isEmployment, keyword, minTemperature, maxTemperature);
+		return ApiResponse.success("학생 프로필 목록을 성공적으로 조회했습니다.", profiles);
 	}
 
 	@GetMapping("/profile/{studentId}")

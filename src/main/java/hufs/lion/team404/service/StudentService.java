@@ -62,6 +62,13 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
+    /**
+     * 공개된 모든 학생 프로필 조회
+     */
+    public List<Student> findAllPublicProfiles() {
+        return studentRepository.findByIsPublicTrueOrderByTemperatureDescCreatedAtDesc();
+    }
+
     // 페이징 - 포폴 조회하기
     public Page<Student> getList(int page) {
         Pageable pageable = PageRequest.of(page, 10);

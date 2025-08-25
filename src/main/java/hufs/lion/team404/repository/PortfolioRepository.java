@@ -27,4 +27,9 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
      * 특정 학생의 공개 포트폴리오 목록 조회 (최신순)
      */
     List<Portfolio> findByStudentAndIsPrivateFalseOrderByCreatedAtDesc(Student student);
+    
+    /**
+     * 특정 학생의 공개 포트폴리오 수 조회
+     */
+    Long countByStudentAndIsPrivateFalse(Student student);
 }

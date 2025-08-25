@@ -16,4 +16,9 @@ public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpec
     List<Student> findByIsAuthenticated(Boolean isAuthenticated);
     
     List<Student> findBySchool(String school);
+    
+    /**
+     * 공개된 학생 프로필을 온도 높은 순, 최신 가입순으로 조회
+     */
+    List<Student> findByIsPublicTrueOrderByTemperatureDescCreatedAtDesc();
 }
