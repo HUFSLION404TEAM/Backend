@@ -14,21 +14,16 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     
     List<Favorite> findByUserIdAndFavoriteType(Long userId, Favorite.FavoriteType favoriteType);
     
-    Optional<Favorite> findByUserIdAndTargetStudentId(Long userId, Long targetStudentId);
+    // 새로운 메서드들 (학생 유저와 구인글용)
+    Optional<Favorite> findByUserIdAndTargetStudentUserId(Long userId, Long targetStudentUserId);
     
-    Optional<Favorite> findByUserIdAndTargetProjectRequestId(Long userId, Long targetProjectRequestId);
+    Optional<Favorite> findByUserIdAndTargetRecruitingId(Long userId, Long targetRecruitingId);
     
-    Optional<Favorite> findByUserIdAndTargetStoreBusinessNumber(Long userId, String targetStoreBusinessNumber);
+    boolean existsByUserIdAndTargetStudentUserId(Long userId, Long targetStudentUserId);
     
-    boolean existsByUserIdAndTargetStudentId(Long userId, Long targetStudentId);
+    boolean existsByUserIdAndTargetRecruitingId(Long userId, Long targetRecruitingId);
     
-    boolean existsByUserIdAndTargetProjectRequestId(Long userId, Long targetProjectRequestId);
+    long countByTargetStudentUserId(Long targetStudentUserId);
     
-    boolean existsByUserIdAndTargetStoreBusinessNumber(Long userId, String targetStoreBusinessNumber);
-    
-    long countByTargetStudentId(Long targetStudentId);
-    
-    long countByTargetProjectRequestId(Long targetProjectRequestId);
-    
-    long countByTargetStoreBusinessNumber(String targetStoreBusinessNumber);
+    long countByTargetRecruitingId(Long targetRecruitingId);
 }

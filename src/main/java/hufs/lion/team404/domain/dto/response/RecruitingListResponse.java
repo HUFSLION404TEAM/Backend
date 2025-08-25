@@ -17,8 +17,13 @@ public class RecruitingListResponse {
     private boolean isRecruiting;
     private String storeName;
     private String storeCategory;
+    private Long favoriteCount; // 좋아요 수 추가
     
     public static RecruitingListResponse fromEntity(Recruiting recruiting) {
+        return fromEntity(recruiting, 0L); // 기본값 0으로 설정
+    }
+    
+    public static RecruitingListResponse fromEntity(Recruiting recruiting, Long favoriteCount) {
         return RecruitingListResponse.builder()
                 .id(recruiting.getId())
                 .title(recruiting.getTitle())
@@ -26,6 +31,7 @@ public class RecruitingListResponse {
                 .isRecruiting(isCurrentlyRecruiting(recruiting.getRecruitmentPeriod()))
                 .storeName(recruiting.getStore().getUser().getName()) // User의 name
                 .storeCategory(recruiting.getStore().getCategory())
+                .favoriteCount(favoriteCount)
                 .build();
     }
     

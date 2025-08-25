@@ -23,16 +23,12 @@ public class Favorite {
     private User user;
     
     @ManyToOne
-    @JoinColumn(name = "target_student_id")
-    private Student targetStudent;
+    @JoinColumn(name = "target_student_user_id")
+    private User targetStudentUser; // 학생의 User 정보
     
     @ManyToOne
-    @JoinColumn(name = "target_project_request_id")
-    private ProjectRequest targetProjectRequest;
-    
-    @ManyToOne
-    @JoinColumn(name = "target_store_business_number")
-    private Store targetStore;
+    @JoinColumn(name = "target_recruiting_id")
+    private Recruiting targetRecruiting; // 구인글
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -51,6 +47,6 @@ public class Favorite {
     private LocalDateTime updatedAt;
     
     public enum FavoriteType {
-        STUDENT, PROJECT_REQUEST, STORE
+        STUDENT_USER, RECRUITING
     }
 }

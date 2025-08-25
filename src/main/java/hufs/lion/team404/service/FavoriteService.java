@@ -33,40 +33,29 @@ public class FavoriteService {
         return favoriteRepository.findByUserIdAndFavoriteType(userId, favoriteType);
     }
     
-    public Optional<Favorite> findByUserIdAndTargetStudentId(Long userId, Long targetStudentId) {
-        return favoriteRepository.findByUserIdAndTargetStudentId(userId, targetStudentId);
+    // 새로운 메서드들 (학생 유저와 구인글용)
+    public Optional<Favorite> findByUserIdAndTargetStudentUserId(Long userId, Long targetStudentUserId) {
+        return favoriteRepository.findByUserIdAndTargetStudentUserId(userId, targetStudentUserId);
     }
     
-    public Optional<Favorite> findByUserIdAndTargetProjectRequestId(Long userId, Long targetProjectRequestId) {
-        return favoriteRepository.findByUserIdAndTargetProjectRequestId(userId, targetProjectRequestId);
+    public Optional<Favorite> findByUserIdAndTargetRecruitingId(Long userId, Long targetRecruitingId) {
+        return favoriteRepository.findByUserIdAndTargetRecruitingId(userId, targetRecruitingId);
     }
     
-    public Optional<Favorite> findByUserIdAndTargetStoreBusinessNumber(Long userId, String targetStoreBusinessNumber) {
-        return favoriteRepository.findByUserIdAndTargetStoreBusinessNumber(userId, targetStoreBusinessNumber);
+    public boolean existsByUserIdAndTargetStudentUserId(Long userId, Long targetStudentUserId) {
+        return favoriteRepository.existsByUserIdAndTargetStudentUserId(userId, targetStudentUserId);
     }
     
-    public boolean existsByUserIdAndTargetStudentId(Long userId, Long targetStudentId) {
-        return favoriteRepository.existsByUserIdAndTargetStudentId(userId, targetStudentId);
+    public boolean existsByUserIdAndTargetRecruitingId(Long userId, Long targetRecruitingId) {
+        return favoriteRepository.existsByUserIdAndTargetRecruitingId(userId, targetRecruitingId);
     }
     
-    public boolean existsByUserIdAndTargetProjectRequestId(Long userId, Long targetProjectRequestId) {
-        return favoriteRepository.existsByUserIdAndTargetProjectRequestId(userId, targetProjectRequestId);
+    public long countByTargetStudentUserId(Long targetStudentUserId) {
+        return favoriteRepository.countByTargetStudentUserId(targetStudentUserId);
     }
     
-    public boolean existsByUserIdAndTargetStoreBusinessNumber(Long userId, String targetStoreBusinessNumber) {
-        return favoriteRepository.existsByUserIdAndTargetStoreBusinessNumber(userId, targetStoreBusinessNumber);
-    }
-    
-    public long countByTargetStudentId(Long targetStudentId) {
-        return favoriteRepository.countByTargetStudentId(targetStudentId);
-    }
-    
-    public long countByTargetProjectRequestId(Long targetProjectRequestId) {
-        return favoriteRepository.countByTargetProjectRequestId(targetProjectRequestId);
-    }
-    
-    public long countByTargetStoreBusinessNumber(String targetStoreBusinessNumber) {
-        return favoriteRepository.countByTargetStoreBusinessNumber(targetStoreBusinessNumber);
+    public long countByTargetRecruitingId(Long targetRecruitingId) {
+        return favoriteRepository.countByTargetRecruitingId(targetRecruitingId);
     }
     
     public List<Favorite> findAll() {

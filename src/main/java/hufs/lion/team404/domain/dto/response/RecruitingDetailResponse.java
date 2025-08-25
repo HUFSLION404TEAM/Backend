@@ -26,6 +26,9 @@ public class RecruitingDetailResponse {
 	// 업체 정보
 	private StoreInfo store;
 
+	// 좋아요 수
+	private Long favoriteCount;
+
 	@Data
 	@Builder
 	public static class StoreInfo {
@@ -41,6 +44,10 @@ public class RecruitingDetailResponse {
 	}
 
 	public static RecruitingDetailResponse fromEntity(Recruiting recruiting) {
+		return fromEntity(recruiting, 0L); // 기본값 0으로 설정
+	}
+	
+	public static RecruitingDetailResponse fromEntity(Recruiting recruiting, Long favoriteCount) {
 		return RecruitingDetailResponse.builder()
 			.id(recruiting.getId())
 			.title(recruiting.getTitle())
@@ -72,6 +79,9 @@ public class RecruitingDetailResponse {
 					.userEmail(recruiting.getStore().getUser() != null ? recruiting.getStore().getUser().getEmail() : null)
 					.build()
 				: null)
+			
+			// 좋아요 수
+			.favoriteCount(favoriteCount)
 			.build();
 	}
 }

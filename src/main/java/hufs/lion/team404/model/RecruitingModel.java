@@ -16,6 +16,7 @@ import hufs.lion.team404.domain.entity.Store;
 import hufs.lion.team404.domain.enums.ErrorCode;
 import hufs.lion.team404.exception.CustomException;
 import hufs.lion.team404.exception.UserNotFoundException;
+import hufs.lion.team404.service.FavoriteService;
 import hufs.lion.team404.service.RecruitingImageService;
 import hufs.lion.team404.service.RecruitingService;
 import hufs.lion.team404.service.StoreService;
@@ -29,6 +30,7 @@ public class RecruitingModel {
 	private final StoreService storeService;
 	private final FileStorageUtil fileStorageUtil;
 	private final RecruitingImageService recruitingImageService;
+	private final FavoriteService favoriteService; // 추가
 
 	public Long createRecruiting(Long userId, String businessNumber, String title, String recruitmentPeriod, String progressPeriod, String price,
 		String projectOutline, String expectedResults, String detailRequirement, List<MultipartFile> images) {
@@ -96,7 +98,10 @@ public class RecruitingModel {
 		Recruiting recruiting = recruitingService.findById(recruitingId)
 			.orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND, "구인글을 찾을 수 없습니다."));
 
-		return RecruitingDetailResponse.fromEntity(recruiting);
+		// 해당 구인글의 좋아요 수 조회
+		Long favoriteCount = favoriteService.countByTargetRecruitingId(recruitingId);
+
+		return RecruitingDetailResponse.fromEntity(recruiting, favoriteCount);
 	}
 
 	/**
@@ -106,7 +111,10 @@ public class RecruitingModel {
 		List<Recruiting> recruitings = recruitingService.findAllWithFilters(category, keyword, isRecruiting);
 
 		return recruitings.stream()
-			.map(RecruitingListResponse::fromEntity)
+			.map(recruiting -> {
+				Long favoriteCount = favoriteService.countByTargetRecruitingId(recruiting.getId());
+				return RecruitingListResponse.fromEntity(recruiting, favoriteCount);
+			})
 			.collect(Collectors.toList());
 	}
 
@@ -127,7 +135,10 @@ public class RecruitingModel {
 		List<Recruiting> recruitings = recruitingService.findByStoreOrderByCreatedAtDesc(store);
 
 		return recruitings.stream()
-			.map(RecruitingListResponse::fromEntity)
+			.map(recruiting -> {
+				Long favoriteCount = favoriteService.countByTargetRecruitingId(recruiting.getId());
+				return RecruitingListResponse.fromEntity(recruiting, favoriteCount);
+			})
 			.collect(Collectors.toList());
 	}
 
@@ -139,7 +150,10 @@ public class RecruitingModel {
 
 		return myStores.stream()
 			.flatMap(store -> recruitingService.findByStoreOrderByCreatedAtDesc(store).stream())
-			.map(RecruitingListResponse::fromEntity)
+			.map(recruiting -> {
+				Long favoriteCount = favoriteService.countByTargetRecruitingId(recruiting.getId());
+				return RecruitingListResponse.fromEntity(recruiting, favoriteCount);
+			})
 			.sorted((r1, r2) -> Long.compare(r2.getId(), r1.getId())) // 최신순 정렬
 			.collect(Collectors.toList());
 	}
