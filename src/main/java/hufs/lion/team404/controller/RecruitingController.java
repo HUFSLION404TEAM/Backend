@@ -2,21 +2,9 @@ package hufs.lion.team404.controller;
 
 import java.util.List;
 
-import hufs.lion.team404.domain.dto.response.RecruitingResponse;
-import hufs.lion.team404.domain.entity.Recruiting;
-import hufs.lion.team404.domain.entity.RecruitingImage;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import hufs.lion.team404.domain.dto.response.ApiResponse;
@@ -29,7 +17,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/recruit")
@@ -67,39 +54,66 @@ public class RecruitingController {
 	}
 
 
+	@GetMapping("/")
+	@Operation(
+		summary = "구인글 목록 조회",
+		description = "모든 구인글 목록을 조회합니다. 카테고리와 제목 검색이 가능합니다."
+	)
+	public ApiResponse<List<RecruitingListResponse>> getAllRecruitings(
+		@RequestParam(value = "category", required = false) String category,
+		@RequestParam(value = "keyword", required = false) String keyword,
+		@RequestParam(value = "isRecruiting", required = false) Boolean isRecruiting
+	) {
+		List<RecruitingListResponse> recruitings = recruitingModel.getAllRecruitings(category, keyword, isRecruiting);
+		return ApiResponse.success("구인글 목록을 성공적으로 조회했습니다.", recruitings);
+	}
+
 	@GetMapping("/{recruitingId}")
 	@Operation(
-			summary = "구인글 조회",
-			description = "가게의 구인글을 조회해줍니다.",
-			security = @SecurityRequirement(name = "Bearer Authentication")
+		summary = "구인글 상세 조회",
+		description = "특정 구인글의 상세 정보를 조회합니다."
 	)
-	public ApiResponse<RecruitingResponse> getRecruitingById(@PathVariable Long recruitingId) {
+	public ApiResponse<RecruitingDetailResponse> getRecruitingById(@PathVariable Long recruitingId) {
+		RecruitingDetailResponse recruiting = recruitingModel.getRecruitingDetail(recruitingId);
+		return ApiResponse.success("구인글을 성공적으로 조회했습니다.", recruiting);
+	}
+	@GetMapping("/store/{businessNumber}")
+	@Operation(
+		summary = "업체별 구인글 조회",
+		description = "특정 업체의 구인글 목록을 조회합니다."
+	)
+	public ApiResponse<List<RecruitingListResponse>> getRecruitingsByStore(@PathVariable String businessNumber) {
+		List<RecruitingListResponse> recruitings = recruitingModel.getRecruitingsByStore(businessNumber);
+		return ApiResponse.success("업체별 구인글 목록을 성공적으로 조회했습니다.", recruitings);
+	}
 
-		Recruiting recruiting;
-		try {
-			recruiting = recruitingModel.getRecruitingById(recruitingId);
-		} catch (IllegalArgumentException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 구인글을 찾을 수 없습니다.");
-		}
+	@GetMapping("/my")
+	@Operation(
+		summary = "내 구인글 조회",
+		description = "현재 로그인한 사용자의 모든 업체 구인글을 조회합니다.",
+		security = @SecurityRequirement(name = "Bearer Authentication")
+	)
+	public ApiResponse<List<RecruitingListResponse>> getMyRecruitings(
+		@AuthenticationPrincipal UserPrincipal userPrincipal
+	) {
+		Long userId = userPrincipal.getId();
+		List<RecruitingListResponse> recruitings = recruitingModel.getMyRecruitings(userId);
+		return ApiResponse.success("내 구인글 목록을 성공적으로 조회했습니다.", recruitings);
+	}
 
-		RecruitingResponse dto = RecruitingResponse.builder()
-				.id(recruiting.getId())
-				.title(recruiting.getTitle())
-				.imagesUrl(
-						recruiting.getImages() == null ? List.of()
-								: recruiting.getImages().stream()
-								.map(RecruitingImage::getImagePath)
-								.toList()
-				)
-				.recruitmentPeriod(recruiting.getRecruitmentPeriod())
-				.progressPeriod(recruiting.getProgressPeriod())
-				.price(recruiting.getPrice())
-				.projectOutline(recruiting.getProjectOutline())
-				.expectedResults(recruiting.getExpectedResults())
-				.detailRequirement(recruiting.getDetailRequirement())
-				.build();
-
-		return ApiResponse.success("공고가 성공적으로 조회되었습니다.", dto);
+	@DeleteMapping("/{recruitingId}")
+	@Operation(
+		summary = "구인글 삭제",
+		description = "구인글을 삭제합니다. 본인의 구인글만 삭제 가능합니다.",
+		security = @SecurityRequirement(name = "Bearer Authentication")
+	)
+	public ApiResponse<Void> deleteRecruiting(
+		@PathVariable Long recruitingId,
+		@AuthenticationPrincipal UserPrincipal userPrincipal
+	) {
+		Long userId = userPrincipal.getId();
+		recruitingModel.deleteRecruiting(recruitingId, userId);
+		return ApiResponse.success("구인글이 성공적으로 삭제되었습니다.");
 	}
 
 

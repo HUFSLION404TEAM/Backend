@@ -100,14 +100,63 @@ public class RecruitingModel {
 	}
 
 	/**
-	 * 구인글 전체 목록 조회
+	 * 구인글 전체 목록 조회 (필터링 지원)
 	 */
-	public List<RecruitingListResponse> getAllRecruitings() {
-		List<Recruiting> recruitings = recruitingService.findAll();
+	public List<RecruitingListResponse> getAllRecruitings(String category, String keyword, Boolean isRecruiting) {
+		List<Recruiting> recruitings = recruitingService.findAllWithFilters(category, keyword, isRecruiting);
 
 		return recruitings.stream()
 			.map(RecruitingListResponse::fromEntity)
 			.collect(Collectors.toList());
+	}
+
+	/**
+	 * 구인글 전체 목록 조회 (기본)
+	 */
+	public List<RecruitingListResponse> getAllRecruitings() {
+		return getAllRecruitings(null, null, null);
+	}
+
+	/**
+	 * 특정 업체의 구인글 목록 조회
+	 */
+	public List<RecruitingListResponse> getRecruitingsByStore(String businessNumber) {
+		Store store = storeService.findByBusinessNumber(businessNumber)
+			.orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND, "업체를 찾을 수 없습니다."));
+
+		List<Recruiting> recruitings = recruitingService.findByStoreOrderByCreatedAtDesc(store);
+
+		return recruitings.stream()
+			.map(RecruitingListResponse::fromEntity)
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 * 내 모든 업체의 구인글 목록 조회
+	 */
+	public List<RecruitingListResponse> getMyRecruitings(Long userId) {
+		List<Store> myStores = storeService.findByUserId(userId);
+
+		return myStores.stream()
+			.flatMap(store -> recruitingService.findByStoreOrderByCreatedAtDesc(store).stream())
+			.map(RecruitingListResponse::fromEntity)
+			.sorted((r1, r2) -> Long.compare(r2.getId(), r1.getId())) // 최신순 정렬
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 * 구인글 삭제 (권한 확인)
+	 */
+	public void deleteRecruiting(Long recruitingId, Long userId) {
+		Recruiting recruiting = recruitingService.findById(recruitingId)
+			.orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND, "구인글을 찾을 수 없습니다."));
+
+		// 구인글의 업체 소유자가 현재 사용자인지 확인
+		if (!recruiting.getStore().getUser().getId().equals(userId)) {
+			throw new CustomException(ErrorCode.ACCESS_DENIED, "구인글을 삭제할 권한이 없습니다.");
+		}
+
+		recruitingService.deleteById(recruitingId);
 	}
 
 }

@@ -23,6 +23,23 @@ public class RecruitingDetailResponse {
 	// 이미지 URL 목록
 	private List<String> imageUrls;
 
+	// 업체 정보
+	private StoreInfo store;
+
+	@Data
+	@Builder
+	public static class StoreInfo {
+		private String businessNumber;
+		private String storeName;
+		private String address;
+		private String contact;
+		private String category;
+		private String introduction;
+		private Double temperature;
+		private String userName; // User의 이름
+		private String userEmail; // User의 이메일
+	}
+
 	public static RecruitingDetailResponse fromEntity(Recruiting recruiting) {
 		return RecruitingDetailResponse.builder()
 			.id(recruiting.getId())
@@ -40,6 +57,21 @@ public class RecruitingDetailResponse {
 					.map(image -> "/uploads/" + image.getSavedFileName()) // 저장된 파일명을 URL로 변환
 					.collect(Collectors.toList())
 				: List.of())
+			
+			// 업체 정보
+			.store(recruiting.getStore() != null ?
+				StoreInfo.builder()
+					.businessNumber(recruiting.getStore().getBusinessNumber())
+					.storeName(recruiting.getStore().getStoreName())
+					.address(recruiting.getStore().getAddress())
+					.contact(recruiting.getStore().getContact())
+					.category(recruiting.getStore().getCategory())
+					.introduction(recruiting.getStore().getIntroduction())
+					.temperature(recruiting.getStore().getTemperature())
+					.userName(recruiting.getStore().getUser() != null ? recruiting.getStore().getUser().getName() : null)
+					.userEmail(recruiting.getStore().getUser() != null ? recruiting.getStore().getUser().getEmail() : null)
+					.build()
+				: null)
 			.build();
 	}
 }

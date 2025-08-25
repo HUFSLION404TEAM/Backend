@@ -19,10 +19,12 @@ public class UserResponse {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private UserRole userRole;
+	private boolean hasStudent;
+	private boolean hasStores;
 
 	@Builder
 	public UserResponse(Long id, String name, String email, String profileImage, String socialProvider, String socialId,
-		LocalDateTime createdAt, LocalDateTime updatedAt, UserRole userRole) {
+		LocalDateTime createdAt, LocalDateTime updatedAt, UserRole userRole, boolean hasStudent, boolean hasStores) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
@@ -32,5 +34,7 @@ public class UserResponse {
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.userRole = userRole;
+		this.hasStudent = hasStudent;
+		this.hasStores = hasStores;
 	}
 }
