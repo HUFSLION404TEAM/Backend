@@ -18,11 +18,15 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
 
-      - name: create application.yml file
+      # application.yml 및 profile yml 파일 생성
+      - name: create application.yml files
         run: |
           mkdir -p ./src/main/resources
-          touch ./src/main/resources/application.yml
-          echo "${{ secrets.APPLICATION_YML }}" >> src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+          echo "${{ secrets.JWT_YML }}" > ./src/main/resources/application-jwt.yml
+          echo "${{ secrets.MYSQL_YML }}" > ./src/main/resources/application-mysql.yml
+          echo "${{ secrets.OAUTH2_YML }}" > ./src/main/resources/application-oauth2.yml
+          echo "${{ secrets.SWAGGER_YML }}" > ./src/main/resources/application-swagger.yml
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -49,41 +53,22 @@ jobs:
       - name: docker Hub push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/unibiz
 
-  deploy-with-docker-compose:
+  run-docker-image-on-ec2:
     needs: build-docker-image
     runs-on: self-hosted
 
     steps:
-      - name: fix permissions
-        run: |
-          sudo chown -R ec2-user:ec2-user /home/ec2-user/actions-runner/_work/Backend/Backend || true
-          sudo chmod -R 755 /home/ec2-user/actions-runner/_work/Backend/Backend || true
-
-      - name: checkout repository
-        uses: actions/checkout@v3
-
       - name: docker pull
         run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/unibiz
 
-      - name: stop existing containers
+      - name: docker stop container
         run: |
-          sudo docker compose down --volumes || true
+          if [ $(sudo docker ps -q -f name=unibiz) ]; then
+            sudo docker stop unibiz
+          fi
 
-      - name: cleanup docker resources
-        run: |
-          sudo docker system prune -af || true
+      - name: docker run new container
+        run: sudo docker run --name unibiz --rm -d -p 8090:8080 ${{ secrets.DOCKERHUB_USERNAME }}/unibiz
 
-      - name: run docker-compose
-        run: |
-          sudo docker compose up -d
-
-      - name: fix final permissions
-        run: |
-          sudo chown -R ec2-user:ec2-user . || true
-
-      - name: verify deployment
-        run: |
-          echo "=== Deployment Status ==="
-          sudo docker compose ps
-          echo "=== Service Logs ==="
-          sudo docker compose logs --tail=50
+      - name: delete old docker image
+        run: sudo docker system prune -f
